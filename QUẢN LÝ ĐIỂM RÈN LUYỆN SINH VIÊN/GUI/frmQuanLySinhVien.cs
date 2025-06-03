@@ -122,10 +122,20 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            //Hoạt động mở frmXoaSinhVien để xác nhận xóa sinh viên
-            frmXoaSinhVien frm = new frmXoaSinhVien();
-            frm.ShowDialog(); // Hiển thị form xóa sinh viên
-            LoadData();
+            if (dgvSinhVien.SelectedRows.Count > 0)
+            {
+                DataGridViewRow row = dgvSinhVien.SelectedRows[0];
+                string maSV = row.Cells["MaSV"].Value.ToString();  
+
+                frmXoaSinhVien frm = new frmXoaSinhVien(maSV);
+                frm.SinhVienDeleted += LoadDanhSachSinhVien; // Đăng ký sự kiện xóa sinh viên
+                frm.ShowDialog();
+                LoadData();
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một sinh viên để xóa.");
+            }
         }
 
         private void btnLoadDanhSachSinhVien_Click(object sender, EventArgs e)

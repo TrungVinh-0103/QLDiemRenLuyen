@@ -197,8 +197,12 @@
             this.Controls.Add(this.txtHoTen);
             this.Controls.Add(this.txtMaSV);
             this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "frmThemSinhVien";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmThemSV";
             this.Load += new System.EventHandler(this.frmThemSinhVien_Load);
             this.ResumeLayout(false);

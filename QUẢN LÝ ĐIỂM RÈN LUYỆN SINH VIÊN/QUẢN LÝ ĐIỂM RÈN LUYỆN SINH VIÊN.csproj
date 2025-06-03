@@ -297,6 +297,7 @@
     <Content Include="images\Logo-DH-Nam-Can-Tho-NCTU.png" />
     <Content Include="images\logo_DNC.png" />
     <Content Include="images\vision.png" />
+    <Content Include="QLRenLuyenSinhVien.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

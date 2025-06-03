@@ -196,8 +196,13 @@
             this.Controls.Add(this.cboGioiTinh);
             this.Controls.Add(this.txtHoTen);
             this.Controls.Add(this.txtMaSV);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "frmSuaSinhVien";
-            this.Text = "frmSuaSV";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Sửa sinh viên";
             this.ResumeLayout(false);
             this.PerformLayout();
 

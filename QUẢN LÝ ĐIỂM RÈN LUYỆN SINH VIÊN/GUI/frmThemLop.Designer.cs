@@ -109,8 +109,12 @@
             this.Controls.Add(this.cboMaKhoa);
             this.Controls.Add(this.txtTenLop);
             this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "frmThemLop";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Thêm lớp mới";
             this.Load += new System.EventHandler(this.frmThemLop_Load);
             this.ResumeLayout(false);

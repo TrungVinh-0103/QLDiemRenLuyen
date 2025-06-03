@@ -77,14 +77,14 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
 
         public int DeleteSinhVien(string maSV)
         {
-            //không sử dụng procedure
             using (SqlConnection conn = db.GetConnection())
             {
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand("DELETE FROM SinhVien WHERE MaSV = @MaSV", conn))
+                using (SqlCommand cmd = new SqlCommand("sp_DeleteSinhVien", conn))
                 {
+                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@MaSV", maSV);
-                    return cmd.ExecuteNonQuery();
+                    return (int)cmd.ExecuteNonQuery();
                 }
             }
         }

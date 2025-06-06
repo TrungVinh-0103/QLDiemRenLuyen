@@ -188,10 +188,10 @@ AS
 BEGIN
     SET NOCOUNT ON;
     INSERT INTO TaiKhoan (MaDangNhap, MatKhau, LoaiTaiKhoan)
-    SELECT MaGVCN, '0000', 'GVCN'
+    SELECT MaNV, '0000', 'GVCN'
     FROM inserted
     WHERE NOT EXISTS (
-        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaGVCN
+        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaNV
     );
 END;
 GO

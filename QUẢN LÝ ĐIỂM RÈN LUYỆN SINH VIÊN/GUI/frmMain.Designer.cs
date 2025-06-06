@@ -85,13 +85,14 @@
             // DanhGiaToolStripMenuItem
             // 
             this.DanhGiaToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.DanhGiaToolStripMenuItem.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.DanhGiaToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.DanhGiaToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.DanhGiaToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("DanhGiaToolStripMenuItem.Image")));
             this.DanhGiaToolStripMenuItem.Name = "DanhGiaToolStripMenuItem";
             this.DanhGiaToolStripMenuItem.Size = new System.Drawing.Size(119, 29);
             this.DanhGiaToolStripMenuItem.Text = "Đánh giá";
-            this.DanhGiaToolStripMenuItem.Click += new System.EventHandler(this.DanhGiaToolStripMenuItem_Click);
+            this.DanhGiaToolStripMenuItem.MouseHover += new System.EventHandler(this.DanhGiaToolStripMenuItem_MouseHover);
             // 
             // QuanLyDiemToolStripMenuItem
             // 
@@ -149,8 +150,8 @@
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(933, 433);
-            this.Controls.Add(this.lblNguoiDangNhap);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.lblNguoiDangNhap);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
         public frmMain(string maDangNhap, string loaiTaiKhoan)
         {
             InitializeComponent();
+            this.AutoScroll = true;
             this.IsMdiContainer = true;
             this.maDangNhap = maDangNhap; 
             this.loaiTaiKhoan = loaiTaiKhoan;
@@ -34,6 +36,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
             menuStrip1.Parent = this;
             menuStrip1.BringToFront();
+
         }
 
         private void QuanLyLopToolStripMenuItem_Click(object sender, EventArgs e)
@@ -58,9 +61,9 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
         private void DanhGiaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmDanhGiaSinhVien danhGiaForm = new frmDanhGiaSinhVien("");
-            danhGiaForm.MdiParent = this;
-            danhGiaForm.Show();
+            frmDanhGiaSinhVien danhGiaSinhVien = new frmDanhGiaSinhVien(maDangNhap);
+            danhGiaSinhVien.MdiParent = this;
+            danhGiaSinhVien.Show();
         }
 
         private void ThongKeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -76,6 +79,14 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
             new frmLogin().Show();
         }
 
-       
+        private void DanhGiaToolStripMenuItem_MouseHover(object sender, EventArgs e)
+        {
+            //DanhGiaToolStripMenuItem.ShowDropDown();
+        }
+
+        private void sinhViênĐánhGiáToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

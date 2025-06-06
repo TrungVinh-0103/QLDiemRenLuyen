@@ -66,6 +66,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                 cboMaKhoa.SelectedValue = row["MaKhoa"].ToString();
                 cboMaNienKhoa.SelectedValue = row["MaNienKhoa"].ToString();
                 cboTrangThai.SelectedItem = row["TrangThai"].ToString();
+                txtEmail.Text = row["Email"].ToString();
             }
         }
 
@@ -83,6 +84,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
             cboMaKhoa.SelectedIndexChanged += cboMaKhoa_SelectedIndexChanged;
             cboMaNienKhoa.SelectedIndexChanged += cboMaNienKhoa_SelectedIndexChanged;
             cboTrangThai.SelectedIndexChanged += cboTrangThai_SelectedIndexChanged;
+            txtEmail.TextChanged += txtEmail_TextChanged;
         }
 
 
@@ -181,7 +183,15 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                 return;
             }
         }
-
+        private void txtEmail_TextChanged(object sender, EventArgs e)
+        {
+            // Kiểm tra nếu email không hợp lệ (ví dụ: rỗng hoặc không đúng định dạng)
+            if (string.IsNullOrWhiteSpace(txtEmail.Text) || !Helpers.EmailHelper.IsValidEmail(txtEmail.Text))
+            {
+                MessageBox.Show("Email không hợp lệ.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+        }
         private void btnLuu_Click(object sender, EventArgs e)
         {
             //full code hoạt động của nút Lưu
@@ -198,7 +208,8 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     TenLop = cboTenLop.SelectedValue.ToString(),
                     MaKhoa = cboMaKhoa.SelectedValue.ToString(),
                     MaNienKhoa = cboMaNienKhoa.SelectedValue.ToString(),
-                    TrangThai = cboTrangThai.SelectedItem.ToString()
+                    TrangThai = cboTrangThai.SelectedItem.ToString(),
+                    Email = txtEmail.Text.Trim()
                 };
                 // Gọi phương thức cập nhật sinh viên từ BUS
                 if (svBUS.UpdateSinhVien(sv, maSV))
@@ -229,5 +240,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                 this.Close();
             }
         }
+
+        
     }
 }

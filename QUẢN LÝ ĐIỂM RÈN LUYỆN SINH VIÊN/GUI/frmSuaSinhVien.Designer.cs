@@ -40,6 +40,7 @@
             this.cboGioiTinh = new System.Windows.Forms.ComboBox();
             this.txtHoTen = new System.Windows.Forms.TextBox();
             this.txtMaSV = new System.Windows.Forms.TextBox();
+            this.txtEmail = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnHuy
@@ -48,7 +49,7 @@
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHuy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHuy.ForeColor = System.Drawing.Color.White;
-            this.btnHuy.Location = new System.Drawing.Point(226, 411);
+            this.btnHuy.Location = new System.Drawing.Point(226, 452);
             this.btnHuy.Name = "btnHuy";
             this.btnHuy.Size = new System.Drawing.Size(115, 29);
             this.btnHuy.TabIndex = 22;
@@ -62,7 +63,7 @@
             this.btnLuu.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLuu.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnLuu.ForeColor = System.Drawing.Color.White;
-            this.btnLuu.Location = new System.Drawing.Point(105, 411);
+            this.btnLuu.Location = new System.Drawing.Point(105, 452);
             this.btnLuu.Name = "btnLuu";
             this.btnLuu.Size = new System.Drawing.Size(115, 29);
             this.btnLuu.TabIndex = 21;
@@ -178,6 +179,17 @@
             this.txtMaSV.TabIndex = 12;
             this.txtMaSV.TextChanged += new System.EventHandler(this.txtMaSV_TextChanged);
             // 
+            // txtEmail
+            // 
+            this.txtEmail.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtEmail.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtEmail.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtEmail.Location = new System.Drawing.Point(188, 417);
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(158, 15);
+            this.txtEmail.TabIndex = 23;
+            this.txtEmail.TextChanged += new System.EventHandler(this.txtEmail_TextChanged);
+            // 
             // frmSuaSinhVien
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,6 +197,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(444, 490);
+            this.Controls.Add(this.txtEmail);
             this.Controls.Add(this.btnHuy);
             this.Controls.Add(this.btnLuu);
             this.Controls.Add(this.cboTrangThai);
@@ -221,5 +234,6 @@
         private System.Windows.Forms.ComboBox cboGioiTinh;
         private System.Windows.Forms.TextBox txtHoTen;
         private System.Windows.Forms.TextBox txtMaSV;
+        private System.Windows.Forms.TextBox txtEmail;
     }
 }

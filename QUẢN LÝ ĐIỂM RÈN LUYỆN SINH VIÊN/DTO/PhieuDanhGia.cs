@@ -47,7 +47,10 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO
         public int Diem5_5 { get; set; }
         public int Diem5_6 { get; set; }
         public int TongDiem { get; set; }
-        public byte[] ImageMinhChung { get; set; }
+        //public byte[] ImageMinhChung { get; set; }
+
+        // Default constructor
+        public PhieuDanhGia() { }
 
         // Constructor
         public PhieuDanhGia(long maPhieu, string maSV, string maHocKy, int nam, string loaiPhieu,
@@ -55,10 +58,9 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO
             int diem2_1, int diem2_2, int diem2_3, int diem2_4, int diem2_5, int diem2_6, int diem2_7,
             int diem3_1, int diem3_2, int diem3_3, int diem3_4, int diem3_5, int diem3_6, int diem3_7,
             int diem4_1, int diem4_2, int diem4_3, int diem4_4, int diem4_5,
-            int diem5_1, int diem5_2, int diem5_3, int diem5_4, int diem5_5, int diem5_6,
-            byte[] imageMinhChung)
+            int diem5_1, int diem5_2, int diem5_3, int diem5_4, int diem5_5, int diem5_6)
         {
-            MaPhieu = maPhieu;
+            //MaPhieu = maPhieu;
             MaSV = maSV;
             MaHocKy = maHocKy;
             Nam = nam;
@@ -96,7 +98,6 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO
             Diem5_4 = diem5_4;
             Diem5_5 = diem5_5;
             Diem5_6 = diem5_6;
-            ImageMinhChung = imageMinhChung;
             TongDiem = Diem1_1 + Diem1_2 + Diem1_3 + Diem1_4 + Diem1_5 + Diem1_6 + Diem1_7 + Diem1_8 +
                        Diem2_1 + Diem2_2 + Diem2_3 + Diem2_4 + Diem2_5 + Diem2_6 + Diem2_7 +
                        Diem3_1 + Diem3_2 + Diem3_3 + Diem3_4 + Diem3_5 + Diem3_6 + Diem3_7 +

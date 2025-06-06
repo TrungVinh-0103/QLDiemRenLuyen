@@ -18,5 +18,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
         {
             return new SqlConnection(connectionString);
         }
+
+       
     }
 }

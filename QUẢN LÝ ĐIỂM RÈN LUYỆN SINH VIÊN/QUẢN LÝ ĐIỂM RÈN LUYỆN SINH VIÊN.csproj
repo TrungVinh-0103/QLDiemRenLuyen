@@ -54,6 +54,15 @@
     <Reference Include="Microsoft.Bcl.HashCode, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.HashCode.1.1.1\lib\net461\Microsoft.Bcl.HashCode.dll</HintPath>
     </Reference>
+    <Reference Include="Raven.Abstractions, Version=3.5.9.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <HintPath>..\packages\RavenDB.Database.3.5.9\lib\net45\Raven.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Client.Lightweight, Version=3.5.9.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <HintPath>..\packages\RavenDB.Client.3.5.9\lib\net45\Raven.Client.Lightweight.dll</HintPath>
+    </Reference>
+    <Reference Include="Raven.Database, Version=3.5.9.0, Culture=neutral, PublicKeyToken=37f41c7f99471593, processorArchitecture=MSIL">
+      <HintPath>..\packages\RavenDB.Database.3.5.9\lib\net45\Raven.Database.dll</HintPath>
+    </Reference>
     <Reference Include="RBush, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c77e27b81f4d0187, processorArchitecture=MSIL">
       <HintPath>..\packages\RBush.Signed.4.0.0\lib\net47\RBush.dll</HintPath>
     </Reference>
@@ -64,6 +73,7 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -92,6 +102,7 @@
     <Compile Include="BUS\HocKyBUS.cs" />
     <Compile Include="BUS\KhoaBUS.cs" />
     <Compile Include="BUS\LopBUS.cs" />
+    <Compile Include="BUS\MinhChungBUS.cs" />
     <Compile Include="BUS\NienKhoaBUS.cs" />
     <Compile Include="BUS\PhieuDanhGiaBUS.cs" />
     <Compile Include="BUS\SinhVienBUS.cs" />
@@ -103,6 +114,7 @@
     <Compile Include="DAO\HocKyDAO.cs" />
     <Compile Include="DAO\KhoaDAO.cs" />
     <Compile Include="DAO\LopDAO.cs" />
+    <Compile Include="DAO\MinhChungDAO.cs" />
     <Compile Include="DAO\NienKhoaDAO.cs" />
     <Compile Include="DAO\PhieuDanhGiaDAO.cs" />
     <Compile Include="DAO\SinhVienDAO.cs" />
@@ -112,6 +124,7 @@
     <Compile Include="DTO\HocKy.cs" />
     <Compile Include="DTO\Khoa.cs" />
     <Compile Include="DTO\Lop.cs" />
+    <Compile Include="DTO\MinhChung.cs" />
     <Compile Include="DTO\NienKhoa.cs" />
     <Compile Include="DTO\PhieuDanhGia.cs" />
     <Compile Include="DTO\SinhVien.cs" />
@@ -207,6 +220,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>QLRenLuyenSinhVienDataSet1.xsd</DependentUpon>
     </Compile>
+    <Compile Include="QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN\Helpers\EmailHelper.cs" />
     <EmbeddedResource Include="GUI\frmDanhGiaSinhVien.resx">
       <DependentUpon>frmDanhGiaSinhVien.cs</DependentUpon>
     </EmbeddedResource>
@@ -252,6 +266,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="..\packages\RavenDB.Database.3.5.9\tools\Raven.Studio.Html5.zip">
+      <Link>Raven.Studio.Html5.zip</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -297,7 +315,6 @@
     <Content Include="images\Logo-DH-Nam-Can-Tho-NCTU.png" />
     <Content Include="images\logo_DNC.png" />
     <Content Include="images\vision.png" />
-    <Content Include="QLRenLuyenSinhVien.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

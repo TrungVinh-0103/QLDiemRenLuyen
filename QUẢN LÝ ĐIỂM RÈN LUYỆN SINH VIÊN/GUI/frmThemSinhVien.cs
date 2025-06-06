@@ -223,7 +223,8 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     TenLop = cboTenLop.SelectedValue.ToString(),
                     MaKhoa = cboMaKhoa.SelectedValue.ToString(),
                     MaNienKhoa = cboMaNienKhoa.SelectedValue.ToString(),
-                    TrangThai = cboTrangThai.Text.Trim()
+                    TrangThai = cboTrangThai.Text.Trim(),
+                    Email = txtEmail.Text.Trim(),
                 };
                 // Thêm sinh viên vào cơ sở dữ liệu
                 if (sinhVienBUS.InsertSinhVien(sv))

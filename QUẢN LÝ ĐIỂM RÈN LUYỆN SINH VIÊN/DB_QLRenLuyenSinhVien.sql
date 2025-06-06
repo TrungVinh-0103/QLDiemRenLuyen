@@ -44,7 +44,7 @@ CREATE TABLE HocKy (
     TenHocKy NVARCHAR(50),
     Nam INT
 );
-
+--====================================================================
 CREATE TABLE SinhVien (
     MaSV NVARCHAR(10) PRIMARY KEY,
     HoTen NVARCHAR(100),
@@ -55,11 +55,44 @@ CREATE TABLE SinhVien (
     MaKhoa NVARCHAR(10),
     MaNienKhoa NVARCHAR(10),
     TrangThai NVARCHAR(50),
+	Email NVARCHAR(50),
     FOREIGN KEY (TenLop, MaKhoa, MaNienKhoa) REFERENCES Lop(TenLop, MaKhoa, MaNienKhoa)
 );
 ALTER TABLE SinhVien
 ADD STT INT;
 select * from SinhVien
+--ALTER TABLE SinhVien
+--ADD Email NVARCHAR(100);
+--GO
+-- Cập nhật dữ liệu mẫu cho Email
+--UPDATE SinhVien
+--SET Email = MaSV + '@student.nctu.edu.vn'
+--WHERE Email IS NULL;
+GO
+--====================================================================
+CREATE TABLE NhanVien (
+    MaNV NVARCHAR(10) PRIMARY KEY,
+    HoTen NVARCHAR(50) NOT NULL,
+    MatKhau NVARCHAR(50) NOT NULL, -- Lưu mật khẩu (nên mã hóa trong thực tế)
+    Email NVARCHAR(100),
+    VaiTro NVARCHAR(20) NOT NULL -- 'GVCN' hoặc 'HoiDong'
+);
+GO
+
+CREATE TABLE GVCN (
+    MaGVCN NVARCHAR(10) PRIMARY KEY,
+    MaNV NVARCHAR(10) NOT NULL,
+    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
+);
+GO
+
+CREATE TABLE HoiDong (
+    MaHoiDong NVARCHAR(10) PRIMARY KEY,
+    MaNV NVARCHAR(10) NOT NULL,
+    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
+);
+GO
+--====================================================================
 CREATE TABLE DiemRenLuyen (
     MaSV NVARCHAR(10),
     MaHocKy NVARCHAR(10),
@@ -111,12 +144,21 @@ CREATE TABLE PhieuDanhGia (
     Diem5_5 INT,
     Diem5_6 INT,
     TongDiem INT,
-    ImageMinhChung VARBINARY(MAX),
     FOREIGN KEY (MaSV) REFERENCES SinhVien(MaSV),
     FOREIGN KEY (MaHocKy) REFERENCES HocKy(MaHocKy)
 );
 GO
-
+--====Xoa cot Minh chung
+ALTER TABLE PhieuDanhGia DROP COLUMN ImageMinhChung;
+SELECT * FROM PhieuDanhGia
+--====THÊM bảng MinhChung để có thể cung cấp nhiều ảnh
+CREATE TABLE MinhChung (
+    MaMinhChung INT IDENTITY(1,1) PRIMARY KEY,
+    MaPhieu BIGINT NOT NULL,
+    ImageData VARBINARY(MAX) NOT NULL,
+    FOREIGN KEY (MaPhieu) REFERENCES PhieuDanhGia(MaPhieu)
+);
+select * from MinhChung
 select sv.HoTen, sv.MaSV, sv.GioiTinh, sv.TenLop, sv.TrangThai, drl.MaSV, drl.MaHocKy, drl.Nam, drl.Diem, drl.XepLoai from SinhVien as sv,  DiemRenLuyen as drl
 select MaSV, Diem from DiemRenLuyen
 select TenLop, MaKhoa, MaNienKhoa from Lop 
@@ -139,7 +181,35 @@ BEGIN
     );
 END;
 GO
-
+CREATE TRIGGER tr_InsertNhanVien_TaiKhoan
+ON GVCN
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO TaiKhoan (MaDangNhap, MatKhau, LoaiTaiKhoan)
+    SELECT MaGVCN, '0000', 'GVCN'
+    FROM inserted
+    WHERE NOT EXISTS (
+        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaGVCN
+    );
+END;
+GO
+CREATE TRIGGER tr_InsertHoiDong_TaiKhoan
+ON HoiDong
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO TaiKhoan (MaDangNhap, MatKhau, LoaiTaiKhoan)
+    SELECT MaHoiDong, '0000', 'HoiDong'
+    FROM inserted
+    WHERE NOT EXISTS (
+        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaHoiDong
+    );
+END;
+GO
+GO
 CREATE TRIGGER tr_ValidateLopNienKhoa
 ON Lop
 AFTER INSERT, UPDATE
@@ -399,7 +469,8 @@ CREATE PROCEDURE sp_InsertSinhVien
     @TenLop NVARCHAR(50),
     @MaKhoa NVARCHAR(10),
     @MaNienKhoa NVARCHAR(10),
-    @TrangThai NVARCHAR(50)
+    @TrangThai NVARCHAR(50),
+	@Email NVARCHAR(100)
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -407,8 +478,8 @@ BEGIN
     BEGIN TRY
         IF EXISTS (SELECT 1 FROM Lop WHERE TenLop = @TenLop AND MaKhoa = @MaKhoa AND MaNienKhoa = @MaNienKhoa)
         BEGIN
-            INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai)
-            VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @QueQuan, @TenLop, @MaKhoa, @MaNienKhoa, @TrangThai);
+            INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai, Email)
+            VALUES (@MaSV, @HoTen, @NgaySinh, @GioiTinh, @QueQuan, @TenLop, @MaKhoa, @MaNienKhoa, @TrangThai, @Email);
             COMMIT TRANSACTION;
             SELECT 1 AS Result;
         END
@@ -428,22 +499,53 @@ BEGIN
 END;
 GO
 
+CREATE PROCEDURE sp_DeleteSinhVien
+    @MaSV VARCHAR(10)
+AS
+BEGIN
+    BEGIN TRY
+        -- Kiểm tra xem sinh viên có tồn tại không
+        IF NOT EXISTS (SELECT 1 FROM SinhVien WHERE MaSV = @MaSV)
+        BEGIN
+            RAISERROR ('Sinh viên không tồn tại!', 16, 1);
+            RETURN;
+        END
+
+        -- Xóa sinh viên
+        DELETE FROM SinhVien WHERE MaSV = @MaSV;
+
+        -- Kiểm tra và xóa các dữ liệu liên quan (nếu cần)
+        DELETE FROM PhieuDanhGia WHERE MaSV = @MaSV;
+        DELETE FROM DiemRenLuyen WHERE MaSV = @MaSV;
+
+        RETURN 1; -- Thành công
+    END TRY
+    BEGIN CATCH
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR (@ErrorMessage, 16, 1);
+        RETURN 0; -- Thất bại
+    END CATCH
+END
+
+GO
 CREATE PROCEDURE sp_SearchSinhVien
     @MaSV NVARCHAR(10) = NULL,
     @HoTen NVARCHAR(100) = NULL,
     @TenLop NVARCHAR(50) = NULL,
     @MaKhoa NVARCHAR(10) = NULL,
-    @MaNienKhoa NVARCHAR(10) = NULL
+    @MaNienKhoa NVARCHAR(10) = NULL,
+	@Email NVARCHAR(100) = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai
+    SELECT MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai, Email
     FROM SinhVien
     WHERE (@MaSV IS NULL OR MaSV = @MaSV)
       AND (@HoTen IS NULL OR HoTen LIKE '%' + @HoTen + '%')
       AND (@TenLop IS NULL OR TenLop = @TenLop)
       AND (@MaKhoa IS NULL OR MaKhoa = @MaKhoa)
-      AND (@MaNienKhoa IS NULL OR MaNienKhoa = @MaNienKhoa);
+      AND (@MaNienKhoa IS NULL OR MaNienKhoa = @MaNienKhoa)
+	  AND (@Email IS NULL OR Email = @Email);
 END;
 GO
 
@@ -588,6 +690,34 @@ BEGIN
 END;
 GO
 
+--==============4/6/2025====UPDATE 2 NEW PROC=========
+CREATE PROCEDURE sp_InsertMinhChung
+    @MaPhieu INT,
+    @ImageData VARBINARY(MAX)
+AS
+BEGIN
+    BEGIN TRY
+        INSERT INTO MinhChung (MaPhieu, ImageData)
+        VALUES (@MaPhieu, @ImageData);
+        RETURN 1;
+    END TRY
+    BEGIN CATCH
+        DECLARE @ErrorMessage NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR (@ErrorMessage, 16, 1);
+        RETURN 0;
+    END CATCH
+END;
+
+CREATE PROCEDURE sp_GetMinhChungByPhieu
+    @MaPhieu INT
+AS
+BEGIN
+    SELECT MaMinhChung, MaPhieu, ImageData
+    FROM MinhChung
+    WHERE MaPhieu = @MaPhieu;
+END;
+GO
+
 CREATE PROCEDURE sp_ThongKeChuaDat
     @TenLop NVARCHAR(50) = NULL,
     @MaKhoa NVARCHAR(10) = NULL,
@@ -682,13 +812,21 @@ INNER JOIN
     ON f.object_id = fc.constraint_object_id
 WHERE 
     f.referenced_object_id = OBJECT_ID('Lop');
-
+--===================================================================================
 INSERT INTO HocKy (MaHocKy, TenHocKy, Nam)
 VALUES 
     ('HK1_2022', N'Học kỳ 1', 2022),
     ('HK2_2022', N'Học kỳ 2', 2022),
     ('HK1_2023', N'Học kỳ 1', 2023),
     ('HK2_2023', N'Học kỳ 2', 2023);
+INSERT INTO HocKy (MaHocKy, TenHocKy, Nam)
+VALUES 
+    ('HK1_2024', N'Học kỳ 1', 2024),
+    ('HK2_2024', N'Học kỳ 2', 2024),
+	('HK3_2024', N'Học kỳ 3', 2024),
+    ('HK1_2025', N'Học kỳ 1', 2025),
+    ('HK2_2025', N'Học kỳ 2', 2025),
+	('HK3_2025', N'Học kỳ 3', 2025);
 
 INSERT INTO SinhVien (MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai)
 VALUES 
@@ -699,6 +837,31 @@ VALUES
 	('222786', N'Nguyễn Hoàng Phúc', '2004-07-31', N'Nam', N'Đồng Tháp', N'DH22TIN02', '7480201', 'K10', N'Đang học'),
 	('222918', N'Từ Công Vinh', '2004-07-26', N'Nam', N'An Giang', N'DH22TIN02', '7480201', 'K10', N'Đang học'),
 	('222273', N'Nguyễn Thị Như Ý', '2004-12-11', N'Nữ', N'Kiên Giang', N'DH22TIN02', '7480201', 'K10', N'Nghỉ học');
+
+INSERT INTO NhanVien (MaNV, HoTen, MatKhau, Email, VaiTro) VALUES
+('NV001', N'Nguyễn Văn A', 'nv1', 'nva@nctu.edu.vn', 'GVCN'),
+('NV002', N'Trần Thị B', 'nv2', 'ttb@nctu.edu.vn', 'GVCN'),
+('NV003', N'Lê Văn C', 'nv3', 'lvc@nctu.edu.vn', 'HoiDong');
+GO
+DELETE FROM GVCN;
+DELETE FROM HoiDong;
+DELETE FROM NhanVien;
+
+INSERT INTO GVCN (MaGVCN, MaNV) VALUES
+('GVCN001', 'NV001'),
+('GVCN002', 'NV002');
+GO
+
+INSERT INTO HoiDong (MaHoiDong, MaNV) VALUES
+('HD001', 'NV003');
+GO
+INSERT INTO TaiKhoan(MaDangNhap, MatKhau, LoaiTaiKhoan) VALUES
+('GVCN001', '0000', 'GVCN'),
+('GVCN002', '0000', 'GVCN');
+GO
+INSERT INTO TaiKhoan(MaDangNhap, MatKhau, LoaiTaiKhoan) VALUES
+('HD001', '0000', 'HoiDong');
+GO
 --=====================DROP=======================
 DELETE FROM SinhVien;
 --Drop bang SinhVien co khoa ngoai
@@ -762,28 +925,14 @@ Select * from Lop
 Select * from DiemRenLuyen
 Select * from HocKy
 Select * from SinhVien
+Select * from MinhChung
+Select * from NhanVien
+Select * from GVCN
+Select * from HoiDong
+DELETE FROM TaiKhoan WHERE maDangNhap = '';
+
 
 
 --=====END TEST PROC AND TRIGGER======================================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

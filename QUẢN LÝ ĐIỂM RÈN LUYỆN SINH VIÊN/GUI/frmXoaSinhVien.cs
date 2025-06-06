@@ -46,6 +46,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     lblMaKhoaValue.Text = row["MaKhoa"].ToString();
                     lblMaNienKhoaValue.Text = row["MaNienKhoa"].ToString();
                     lblTrangThaiValue.Text = row["TrangThai"].ToString();
+                    lblEmailValue.Text = row["Email"].ToString();
                 }
                 else
                 {

@@ -58,7 +58,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
                     cmd.Parameters.AddWithValue("@Diem5_4", pg.Diem5_4);
                     cmd.Parameters.AddWithValue("@Diem5_5", pg.Diem5_5);
                     cmd.Parameters.AddWithValue("@Diem5_6", pg.Diem5_6);
-                    cmd.Parameters.AddWithValue("@ImageMinhChung", (object)pg.ImageMinhChung ?? DBNull.Value);
+                    //cmd.Parameters.AddWithValue("@ImageMinhChung", (object)pg.ImageMinhChung ?? DBNull.Value);
                     return (int)cmd.ExecuteScalar();
                 }
             }
@@ -79,6 +79,21 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     return dt;
+                }
+            }
+        }
+
+        internal void InsertMinhChung(MinhChung mc)
+        {
+            using (SqlConnection conn = db.GetConnection())
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("sp_InsertMinhChung", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@MaPhieu", mc.MaPhieu);
+                    cmd.Parameters.AddWithValue("@ImageData", mc.ImageData);
+                    cmd.ExecuteNonQuery();
                 }
             }
         }

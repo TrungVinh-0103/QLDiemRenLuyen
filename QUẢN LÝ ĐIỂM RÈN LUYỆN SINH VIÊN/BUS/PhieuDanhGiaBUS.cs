@@ -13,7 +13,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
     {
         private PhieuDanhGiaDAO pgDAO = new PhieuDanhGiaDAO();
 
-        public bool AddPhieuDanhGia(PhieuDanhGia pg)
+        public int AddPhieuDanhGia(PhieuDanhGia pg)
         {
             if (!ValidationHelper.IsValidMaSV(pg.MaSV))
             {
@@ -32,7 +32,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
             try
             {
                 pg.TongDiem = totalScore;
-                return pgDAO.InsertPhieuDanhGia(pg) == 1;
+                return pgDAO.InsertPhieuDanhGia(pg);
             }
             catch (Exception ex)
             {
@@ -44,6 +44,23 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
         public DataTable GetPhieuDanhGia(string maSV, string maHocKy, int nam)
         {
             return pgDAO.GetPhieuDanhGia(maSV, maHocKy, nam);
+        }
+
+        internal void AddMinhChung(MinhChung mc)
+        {
+            if (mc == null || mc.ImageData == null || mc.ImageData.Length == 0)
+            {
+                throw new Exception("Minh chứng không hợp lệ.");
+            }
+            try
+            {
+                pgDAO.InsertMinhChung(mc);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message);
+                throw;
+            }
         }
     }
 }

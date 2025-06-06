@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS;
+using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.Helpers;
 
 namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 {
@@ -40,6 +41,13 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                 dgvLop.DataSource = null; // Xóa dữ liệu nếu không có lớp
             }
 
+        }
+        private void btnLoadDanhSachLop_Click(object sender, EventArgs e)
+        {
+            // Tải lại danh sách lớp từ cơ sở dữ liệu
+            LoadLop();
+            txtTimKiemLop.Clear(); // Xóa nội dung tìm kiếm
+            MessageBox.Show("Đã tải lại danh sách lớp.");
         }
         private void frmQuanLyLop_Load(object sender, EventArgs e)
         {
@@ -84,21 +92,35 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
         {
             if (dgvLop.SelectedRows.Count > 0)
             {
-                DataGridViewRow selectedRow = dgvLop.SelectedRows[0];
-                string tenLop = selectedRow.Cells["TenLop"].Value.ToString();
-                string maKhoa = selectedRow.Cells["MaKhoa"].Value.ToString();
-                string maNienKhoa = selectedRow.Cells["MaNienKhoa"].Value.ToString();
-                // Xác nhận xóa
-                DialogResult result = MessageBox.Show($"Bạn có chắc chắn muốn xóa lớp {tenLop} không?", "Xác nhận xóa", MessageBoxButtons.YesNo);
+                string tenLop = dgvLop.SelectedRows[0].Cells["TenLop"].Value.ToString();
+                string maKhoa = dgvLop.SelectedRows[0].Cells["MaKhoa"].Value.ToString();
+                string maNienKhoa = dgvLop.SelectedRows[0].Cells["MaNienKhoa"].Value.ToString();
+                DialogResult result = MessageBox.Show($"Bạn có chắc muốn xóa lớp {tenLop} không? Dữ liệu liên quan sẽ bị xóa!",
+                    "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (result == DialogResult.Yes)
                 {
-                    lopBUS.DeleteLop(tenLop, maKhoa, maNienKhoa);
-                    LoadLop();
+                    try
+                    {
+                        if (lopBUS.DeleteLop(tenLop, maKhoa, maNienKhoa))
+                        {
+                            MessageBox.Show("Xóa lớp thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadLop();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Xóa lớp thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(ex.Message);
+                        MessageBox.Show("Lỗi khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             else
             {
-                MessageBox.Show("Vui lòng chọn lớp cần xóa.");
+                MessageBox.Show("Vui lòng chọn lớp để xóa!");
             }
         }
         private void btnTimKiemLop_Click(object sender, EventArgs e)
@@ -131,12 +153,6 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
             }
         }
 
-        private void btnLoadDanhSachLop_Click(object sender, EventArgs e)
-        {
-            // Tải lại danh sách lớp từ cơ sở dữ liệu
-            LoadLop();
-            txtTimKiemLop.Clear(); // Xóa nội dung tìm kiếm
-            MessageBox.Show("Đã tải lại danh sách lớp.");
-        }
+
     }
 }

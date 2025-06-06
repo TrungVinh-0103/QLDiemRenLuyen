@@ -18,8 +18,9 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO
         public string MaKhoa { get; set; }
         public string MaNienKhoa { get; set; }
         public string TrangThai { get; set; }
+        public string Email { get; set; }
         // Constructor
-        public SinhVien(int stt,string maSV, string hoTen, DateTime ngaySinh, string gioiTinh, string tenLop, string maKhoa, string maNienKhoa, string trangThai)
+        public SinhVien(int stt,string maSV, string hoTen, DateTime ngaySinh, string gioiTinh, string tenLop, string maKhoa, string maNienKhoa, string trangThai, string email)
         {
             STT = stt;
             MaSV = maSV;
@@ -30,6 +31,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO
             MaKhoa = maKhoa;
             MaNienKhoa = maNienKhoa;
             TrangThai = trangThai;
+            Email = email;
         }
         // Default constructor
         public SinhVien() { }

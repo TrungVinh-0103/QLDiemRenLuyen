@@ -40,6 +40,7 @@
             this.lblTrangThaiValue = new System.Windows.Forms.Label();
             this.btnHuy = new System.Windows.Forms.Button();
             this.btnXacNhan = new System.Windows.Forms.Button();
+            this.lblEmailValue = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblMaSVValue
@@ -138,7 +139,7 @@
             this.btnHuy.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHuy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHuy.ForeColor = System.Drawing.Color.White;
-            this.btnHuy.Location = new System.Drawing.Point(226, 411);
+            this.btnHuy.Location = new System.Drawing.Point(226, 451);
             this.btnHuy.Name = "btnHuy";
             this.btnHuy.Size = new System.Drawing.Size(115, 29);
             this.btnHuy.TabIndex = 24;
@@ -152,13 +153,23 @@
             this.btnXacNhan.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnXacNhan.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnXacNhan.ForeColor = System.Drawing.Color.White;
-            this.btnXacNhan.Location = new System.Drawing.Point(105, 411);
+            this.btnXacNhan.Location = new System.Drawing.Point(105, 451);
             this.btnXacNhan.Name = "btnXacNhan";
             this.btnXacNhan.Size = new System.Drawing.Size(115, 29);
             this.btnXacNhan.TabIndex = 23;
             this.btnXacNhan.Text = "Xác nhận xóa";
             this.btnXacNhan.UseVisualStyleBackColor = false;
             this.btnXacNhan.Click += new System.EventHandler(this.btnXacNhan_Click);
+            // 
+            // lblEmailValue
+            // 
+            this.lblEmailValue.AutoSize = true;
+            this.lblEmailValue.BackColor = System.Drawing.Color.White;
+            this.lblEmailValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblEmailValue.Location = new System.Drawing.Point(189, 417);
+            this.lblEmailValue.Name = "lblEmailValue";
+            this.lblEmailValue.Size = new System.Drawing.Size(0, 13);
+            this.lblEmailValue.TabIndex = 25;
             // 
             // frmXoaSinhVien
             // 
@@ -167,6 +178,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(444, 490);
+            this.Controls.Add(this.lblEmailValue);
             this.Controls.Add(this.btnHuy);
             this.Controls.Add(this.btnXacNhan);
             this.Controls.Add(this.lblTrangThaiValue);
@@ -204,5 +216,6 @@
         private System.Windows.Forms.Label lblTrangThaiValue;
         private System.Windows.Forms.Button btnHuy;
         private System.Windows.Forms.Button btnXacNhan;
+        private System.Windows.Forms.Label lblEmailValue;
     }
 }

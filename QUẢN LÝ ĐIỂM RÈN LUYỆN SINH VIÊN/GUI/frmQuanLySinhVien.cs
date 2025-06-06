@@ -105,7 +105,8 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     TenLop = row.Cells["TenLop"].Value.ToString(),
                     MaKhoa = row.Cells["MaKhoa"].Value.ToString(),
                     MaNienKhoa = row.Cells["MaNienKhoa"].Value.ToString(),
-                    TrangThai = row.Cells["TrangThai"].Value.ToString()
+                    TrangThai = row.Cells["TrangThai"].Value.ToString(),
+                    Email = row.Cells["Email"].Value.ToString()
                 };
 
                 frmSuaSinhVien frm = new frmSuaSinhVien(sv);

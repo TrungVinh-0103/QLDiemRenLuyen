@@ -48,6 +48,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
                     cmd.Parameters.AddWithValue("@MaKhoa", sv.MaKhoa);
                     cmd.Parameters.AddWithValue("@MaNienKhoa", sv.MaNienKhoa);
                     cmd.Parameters.AddWithValue("@TrangThai", sv.TrangThai);
+                    cmd.Parameters.AddWithValue("@Email", sv.Email);
                     return (int)cmd.ExecuteScalar();
                 }
             }
@@ -59,7 +60,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
             using (SqlConnection conn = db.GetConnection())
             {
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand("UPDATE SinhVien SET HoTen = @HoTen, NgaySinh = @NgaySinh, GioiTinh = @GioiTinh, QueQuan = @QueQuan, TenLop = @TenLop, MaKhoa = @MaKhoa, MaNienKhoa = @MaNienKhoa, TrangThai = @TrangThai WHERE MaSV = @MaSV", conn))
+                using (SqlCommand cmd = new SqlCommand("UPDATE SinhVien SET HoTen = @HoTen, NgaySinh = @NgaySinh, GioiTinh = @GioiTinh, QueQuan = @QueQuan, TenLop = @TenLop, MaKhoa = @MaKhoa, MaNienKhoa = @MaNienKhoa, TrangThai = @TrangThai, Email = @Email WHERE MaSV = @MaSV", conn))
                 {
                     cmd.Parameters.AddWithValue("@MaSV", sv.MaSV);
                     cmd.Parameters.AddWithValue("@HoTen", sv.HoTen);
@@ -70,6 +71,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
                     cmd.Parameters.AddWithValue("@MaKhoa", sv.MaKhoa);
                     cmd.Parameters.AddWithValue("@MaNienKhoa", sv.MaNienKhoa);
                     cmd.Parameters.AddWithValue("@TrangThai", sv.TrangThai);
+                    cmd.Parameters.AddWithValue("@Email", sv.Email);
                     return cmd.ExecuteNonQuery();
                 }
             }
@@ -154,7 +156,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
         public static DataTable GetAllSinhVien_STT()
         {
             string query = @"
-        SELECT MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai
+        SELECT MaSV, HoTen, NgaySinh, GioiTinh, QueQuan, TenLop, MaKhoa, MaNienKhoa, TrangThai, Email
         FROM SinhVien
         ORDER BY HoTen"; // hoặc ORDER BY MaSV
             return DataProvider.ExecuteQuery(query);

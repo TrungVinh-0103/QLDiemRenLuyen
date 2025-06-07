@@ -17,5 +17,14 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
         {
             return hocKyDAO.GetAllHocKy();
         }
+
+        public DataTable GetHocKyByNam(int nam)
+        {
+            if (nam <= 0)
+            {
+                throw new ArgumentException("Năm học không hợp lệ.");
+            }
+            return hocKyDAO.GetHocKyByNam(nam);
+        }
     }
 }

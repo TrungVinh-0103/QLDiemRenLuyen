@@ -46,6 +46,7 @@ CREATE TABLE HocKy (
 );
 --====================================================================
 CREATE TABLE SinhVien (
+	STT INT,
     MaSV NVARCHAR(10) PRIMARY KEY,
     HoTen NVARCHAR(100),
     NgaySinh DATE,
@@ -58,9 +59,9 @@ CREATE TABLE SinhVien (
 	Email NVARCHAR(50),
     FOREIGN KEY (TenLop, MaKhoa, MaNienKhoa) REFERENCES Lop(TenLop, MaKhoa, MaNienKhoa)
 );
-ALTER TABLE SinhVien
-ADD STT INT;
-select * from SinhVien
+--ALTER TABLE SinhVien
+--ADD STT INT;
+--select * from SinhVien
 --ALTER TABLE SinhVien
 --ADD Email NVARCHAR(100);
 --GO
@@ -70,27 +71,6 @@ select * from SinhVien
 --WHERE Email IS NULL;
 GO
 --====================================================================
-CREATE TABLE NhanVien (
-    MaNV NVARCHAR(10) PRIMARY KEY,
-    HoTen NVARCHAR(50) NOT NULL,
-    MatKhau NVARCHAR(50) NOT NULL, -- Lưu mật khẩu (nên mã hóa trong thực tế)
-    Email NVARCHAR(100),
-    VaiTro NVARCHAR(20) NOT NULL -- 'GVCN' hoặc 'HoiDong'
-);
-GO
-
-CREATE TABLE GVCN (
-    MaGVCN NVARCHAR(10) PRIMARY KEY,
-    MaNV NVARCHAR(10) NOT NULL,
-    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
-);
-GO
-
-CREATE TABLE HoiDong (
-    MaHoiDong NVARCHAR(10) PRIMARY KEY,
-    MaNV NVARCHAR(10) NOT NULL,
-    FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV)
-);
 GO
 --====================================================================
 CREATE TABLE DiemRenLuyen (
@@ -149,8 +129,8 @@ CREATE TABLE PhieuDanhGia (
 );
 GO
 --====Xoa cot Minh chung
-ALTER TABLE PhieuDanhGia DROP COLUMN ImageMinhChung;
-SELECT * FROM PhieuDanhGia
+--ALTER TABLE PhieuDanhGia DROP COLUMN ImageMinhChung;
+--SELECT * FROM PhieuDanhGia
 --====THÊM bảng MinhChung để có thể cung cấp nhiều ảnh
 CREATE TABLE MinhChung (
     MaMinhChung INT IDENTITY(1,1) PRIMARY KEY,
@@ -180,35 +160,6 @@ BEGIN
         SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaSV
     );
 END;
-GO
-CREATE TRIGGER tr_InsertNhanVien_TaiKhoan
-ON GVCN
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan (MaDangNhap, MatKhau, LoaiTaiKhoan)
-    SELECT MaNV, '0000', 'GVCN'
-    FROM inserted
-    WHERE NOT EXISTS (
-        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaNV
-    );
-END;
-GO
-CREATE TRIGGER tr_InsertHoiDong_TaiKhoan
-ON HoiDong
-AFTER INSERT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO TaiKhoan (MaDangNhap, MatKhau, LoaiTaiKhoan)
-    SELECT MaHoiDong, '0000', 'HoiDong'
-    FROM inserted
-    WHERE NOT EXISTS (
-        SELECT 1 FROM TaiKhoan WHERE MaDangNhap = inserted.MaHoiDong
-    );
-END;
-GO
 GO
 CREATE TRIGGER tr_ValidateLopNienKhoa
 ON Lop
@@ -304,7 +255,7 @@ BEGIN
                 ELSE N'Kém'
             END AS XepLoai
         FROM inserted i
-        WHERE i.LoaiPhieu = 'HoiDong'
+        -- Loại bỏ điều kiện LoaiPhieu = 'HoiDong' để đồng bộ tất cả phiếu
     ) AS source
     ON target.MaSV = source.MaSV 
        AND target.MaHocKy = source.MaHocKy 
@@ -737,6 +688,17 @@ BEGIN
       AND sv.TrangThai = N'Đang học';
 END;
 GO
+
+CREATE PROCEDURE sp_InsertMinhChung
+    @MaPhieu INT,
+    @ImageData VARBINARY(MAX)
+AS
+BEGIN
+    SET NOCOUNT ON; 
+    INSERT INTO MinhChung (MaPhieu, ImageData)
+    VALUES (@MaPhieu, @ImageData);
+    SELECT SCOPE_IDENTITY() AS MaMinhChung; 
+END
 --=======TRIGGER========================================================================
 CREATE TRIGGER trg_AutoSTT_SinhVien
 ON SinhVien
@@ -764,6 +726,24 @@ SELECT
 FROM SinhVien
 
 --=====================================================================================
+INSERT INTO DiemRenLuyen (MaSV, MaHocKy, Nam, Diem, XepLoai)
+SELECT 
+    p.MaSV, 
+    p.MaHocKy, 
+    p.Nam, 
+    p.TongDiem,
+    CASE 
+        WHEN p.TongDiem >= 90 THEN N'Xuất sắc'
+        WHEN p.TongDiem >= 80 THEN N'Tốt'
+        WHEN p.TongDiem >= 65 THEN N'Khá'
+        WHEN p.TongDiem >= 50 THEN N'Trung bình'
+        WHEN p.TongDiem >= 35 THEN N'Yếu'
+        ELSE N'Kém'
+    END AS XepLoai
+FROM PhieuDanhGia p
+LEFT JOIN DiemRenLuyen drl ON p.MaSV = drl.MaSV AND p.MaHocKy = drl.MaHocKy AND p.Nam = drl.Nam
+WHERE drl.MaSV IS NULL; -- Chỉ thêm những bản ghi chưa có
+
 -- Insert Sample Data
 INSERT INTO Truong (MaTruong, TenTruong)
 VALUES ('DNC', N'Đại học Nam Cần Thơ');
@@ -926,9 +906,6 @@ Select * from DiemRenLuyen
 Select * from HocKy
 Select * from SinhVien
 Select * from MinhChung
-Select * from NhanVien
-Select * from GVCN
-Select * from HoiDong
 DELETE FROM TaiKhoan WHERE maDangNhap = '';
 
 

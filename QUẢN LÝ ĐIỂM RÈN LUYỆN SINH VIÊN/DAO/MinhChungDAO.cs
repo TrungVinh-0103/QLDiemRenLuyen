@@ -18,12 +18,14 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
             using (SqlConnection conn = db.GetConnection())
             {
                 conn.Open();
-                using (SqlCommand cmd = new SqlCommand("sp_InsertMinhChung", conn))
+                using (SqlCommand cmd = new SqlCommand(
+                    "INSERT INTO MinhChung (MaPhieu, ImageData) VALUES (@MaPhieu, @ImageData); SELECT SCOPE_IDENTITY();",
+                    conn))
                 {
-                    cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@MaPhieu", mc.MaPhieu);
-                    cmd.Parameters.AddWithValue("@ImageData", mc.ImageData);
-                    return (int)cmd.ExecuteScalar();
+                    cmd.Parameters.AddWithValue("@ImageData", mc.ImageData ?? (object)DBNull.Value); // Xử lý null cho ImageData
+                    object result = cmd.ExecuteScalar(); // Lấy giá trị MaMinhChung vừa được tạo
+                    return result != null ? Convert.ToInt32(result) : -1; // Trả về -1 nếu không có giá trị
                 }
             }
         }

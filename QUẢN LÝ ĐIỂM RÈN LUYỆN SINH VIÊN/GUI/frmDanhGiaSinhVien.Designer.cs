@@ -221,7 +221,7 @@
             this.btnGui = new System.Windows.Forms.Button();
             this.btnHuy = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnChonAnh = new System.Windows.Forms.Button();
+            this.picMinhChung = new System.Windows.Forms.PictureBox();
             this.pnlDanhGia.SuspendLayout();
             this.grpDiem5.SuspendLayout();
             this.grpDiem4.SuspendLayout();
@@ -229,6 +229,7 @@
             this.grpDiem2.SuspendLayout();
             this.grpDiem1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMinhChung)).BeginInit();
             this.SuspendLayout();
             // 
             // pnlDanhGia
@@ -604,6 +605,7 @@
             this.txtDiem5_6.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_6.TabIndex = 5;
             this.txtDiem5_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_6.TextChanged += new System.EventHandler(this.txtDiem5_6_TextChanged);
             // 
             // txtDiem5_5
             // 
@@ -614,6 +616,7 @@
             this.txtDiem5_5.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_5.TabIndex = 4;
             this.txtDiem5_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_5.TextChanged += new System.EventHandler(this.txtDiem5_5_TextChanged);
             // 
             // txtDiem5_4
             // 
@@ -624,6 +627,7 @@
             this.txtDiem5_4.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_4.TabIndex = 3;
             this.txtDiem5_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_4.TextChanged += new System.EventHandler(this.txtDiem5_4_TextChanged);
             // 
             // txtDiem5_3
             // 
@@ -634,6 +638,7 @@
             this.txtDiem5_3.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_3.TabIndex = 2;
             this.txtDiem5_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_3.TextChanged += new System.EventHandler(this.txtDiem5_3_TextChanged);
             // 
             // txtDiem5_2
             // 
@@ -644,6 +649,7 @@
             this.txtDiem5_2.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_2.TabIndex = 1;
             this.txtDiem5_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_2.TextChanged += new System.EventHandler(this.txtDiem5_2_TextChanged);
             // 
             // txtDiem5_1
             // 
@@ -654,6 +660,7 @@
             this.txtDiem5_1.Size = new System.Drawing.Size(41, 14);
             this.txtDiem5_1.TabIndex = 0;
             this.txtDiem5_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem5_1.TextChanged += new System.EventHandler(this.txtDiem5_1_TextChanged);
             // 
             // grpDiem4
             // 
@@ -762,6 +769,7 @@
             this.txtDiem4_5.Size = new System.Drawing.Size(41, 14);
             this.txtDiem4_5.TabIndex = 4;
             this.txtDiem4_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem4_5.TextChanged += new System.EventHandler(this.txtDiem4_5_TextChanged);
             // 
             // txtDiem4_4
             // 
@@ -772,6 +780,7 @@
             this.txtDiem4_4.Size = new System.Drawing.Size(41, 14);
             this.txtDiem4_4.TabIndex = 3;
             this.txtDiem4_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem4_4.TextChanged += new System.EventHandler(this.txtDiem4_4_TextChanged);
             // 
             // txtDiem4_3
             // 
@@ -782,6 +791,7 @@
             this.txtDiem4_3.Size = new System.Drawing.Size(41, 14);
             this.txtDiem4_3.TabIndex = 2;
             this.txtDiem4_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem4_3.TextChanged += new System.EventHandler(this.txtDiem4_3_TextChanged);
             // 
             // txtDiem4_2
             // 
@@ -792,6 +802,7 @@
             this.txtDiem4_2.Size = new System.Drawing.Size(41, 14);
             this.txtDiem4_2.TabIndex = 1;
             this.txtDiem4_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem4_2.TextChanged += new System.EventHandler(this.txtDiem4_2_TextChanged);
             // 
             // txtDiem4_1
             // 
@@ -802,6 +813,7 @@
             this.txtDiem4_1.Size = new System.Drawing.Size(41, 14);
             this.txtDiem4_1.TabIndex = 0;
             this.txtDiem4_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem4_1.TextChanged += new System.EventHandler(this.txtDiem4_1_TextChanged);
             // 
             // grpDiem3
             // 
@@ -934,6 +946,7 @@
             this.txtDiem3_7.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_7.TabIndex = 6;
             this.txtDiem3_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_7.TextChanged += new System.EventHandler(this.txtDiem3_7_TextChanged);
             // 
             // txtDiem3_6
             // 
@@ -944,6 +957,7 @@
             this.txtDiem3_6.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_6.TabIndex = 5;
             this.txtDiem3_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_6.TextChanged += new System.EventHandler(this.txtDiem3_6_TextChanged);
             // 
             // txtDiem3_5
             // 
@@ -954,6 +968,7 @@
             this.txtDiem3_5.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_5.TabIndex = 4;
             this.txtDiem3_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_5.TextChanged += new System.EventHandler(this.txtDiem3_5_TextChanged);
             // 
             // txtDiem3_4
             // 
@@ -964,6 +979,7 @@
             this.txtDiem3_4.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_4.TabIndex = 3;
             this.txtDiem3_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_4.TextChanged += new System.EventHandler(this.txtDiem3_4_TextChanged);
             // 
             // txtDiem3_3
             // 
@@ -974,6 +990,7 @@
             this.txtDiem3_3.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_3.TabIndex = 2;
             this.txtDiem3_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_3.TextChanged += new System.EventHandler(this.txtDiem3_3_TextChanged);
             // 
             // txtDiem3_2
             // 
@@ -984,6 +1001,7 @@
             this.txtDiem3_2.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_2.TabIndex = 1;
             this.txtDiem3_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_2.TextChanged += new System.EventHandler(this.txtDiem3_2_TextChanged);
             // 
             // txtDiem3_1
             // 
@@ -994,6 +1012,7 @@
             this.txtDiem3_1.Size = new System.Drawing.Size(41, 14);
             this.txtDiem3_1.TabIndex = 0;
             this.txtDiem3_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem3_1.TextChanged += new System.EventHandler(this.txtDiem3_1_TextChanged);
             // 
             // label97
             // 
@@ -1137,6 +1156,7 @@
             this.txtDiem2_7.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_7.TabIndex = 6;
             this.txtDiem2_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_7.TextChanged += new System.EventHandler(this.txtDiem2_7_TextChanged);
             // 
             // txtDiem2_6
             // 
@@ -1147,6 +1167,7 @@
             this.txtDiem2_6.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_6.TabIndex = 5;
             this.txtDiem2_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_6.TextChanged += new System.EventHandler(this.txtDiem2_6_TextChanged);
             // 
             // txtDiem2_5
             // 
@@ -1157,6 +1178,7 @@
             this.txtDiem2_5.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_5.TabIndex = 4;
             this.txtDiem2_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_5.TextChanged += new System.EventHandler(this.txtDiem2_5_TextChanged);
             // 
             // txtDiem2_4
             // 
@@ -1167,6 +1189,7 @@
             this.txtDiem2_4.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_4.TabIndex = 3;
             this.txtDiem2_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_4.TextChanged += new System.EventHandler(this.txtDiem2_4_TextChanged);
             // 
             // txtDiem2_3
             // 
@@ -1177,6 +1200,7 @@
             this.txtDiem2_3.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_3.TabIndex = 2;
             this.txtDiem2_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_3.TextChanged += new System.EventHandler(this.txtDiem2_3_TextChanged);
             // 
             // txtDiem2_2
             // 
@@ -1187,6 +1211,7 @@
             this.txtDiem2_2.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_2.TabIndex = 1;
             this.txtDiem2_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_2.TextChanged += new System.EventHandler(this.txtDiem2_2_TextChanged);
             // 
             // txtDiem2_1
             // 
@@ -1197,6 +1222,7 @@
             this.txtDiem2_1.Size = new System.Drawing.Size(41, 14);
             this.txtDiem2_1.TabIndex = 0;
             this.txtDiem2_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem2_1.TextChanged += new System.EventHandler(this.txtDiem2_1_TextChanged);
             // 
             // grpDiem1
             // 
@@ -1341,6 +1367,7 @@
             this.txtDiem1_8.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_8.TabIndex = 7;
             this.txtDiem1_8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_8.TextChanged += new System.EventHandler(this.txtDiem1_8_TextChanged);
             // 
             // txtDiem1_7
             // 
@@ -1351,6 +1378,7 @@
             this.txtDiem1_7.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_7.TabIndex = 6;
             this.txtDiem1_7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_7.TextChanged += new System.EventHandler(this.txtDiem1_7_TextChanged);
             // 
             // txtDiem1_6
             // 
@@ -1361,6 +1389,7 @@
             this.txtDiem1_6.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_6.TabIndex = 5;
             this.txtDiem1_6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_6.TextChanged += new System.EventHandler(this.txtDiem1_6_TextChanged);
             // 
             // txtDiem1_5
             // 
@@ -1371,6 +1400,7 @@
             this.txtDiem1_5.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_5.TabIndex = 4;
             this.txtDiem1_5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_5.TextChanged += new System.EventHandler(this.txtDiem1_5_TextChanged);
             // 
             // txtDiem1_4
             // 
@@ -1381,6 +1411,7 @@
             this.txtDiem1_4.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_4.TabIndex = 3;
             this.txtDiem1_4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_4.TextChanged += new System.EventHandler(this.txtDiem1_4_TextChanged);
             // 
             // txtDiem1_3
             // 
@@ -1391,6 +1422,7 @@
             this.txtDiem1_3.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_3.TabIndex = 2;
             this.txtDiem1_3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_3.TextChanged += new System.EventHandler(this.txtDiem1_3_TextChanged);
             // 
             // txtDiem1_2
             // 
@@ -1401,6 +1433,7 @@
             this.txtDiem1_2.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_2.TabIndex = 1;
             this.txtDiem1_2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_2.TextChanged += new System.EventHandler(this.txtDiem1_2_TextChanged);
             // 
             // txtDiem1_1
             // 
@@ -1411,6 +1444,7 @@
             this.txtDiem1_1.Size = new System.Drawing.Size(41, 14);
             this.txtDiem1_1.TabIndex = 0;
             this.txtDiem1_1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtDiem1_1.TextChanged += new System.EventHandler(this.txtDiem1_1_TextChanged);
             // 
             // label87
             // 
@@ -2480,8 +2514,9 @@
             this.lstImages.Location = new System.Drawing.Point(0, 397);
             this.lstImages.Name = "lstImages";
             this.lstImages.ScrollAlwaysVisible = true;
-            this.lstImages.Size = new System.Drawing.Size(690, 225);
+            this.lstImages.Size = new System.Drawing.Size(241, 225);
             this.lstImages.TabIndex = 17;
+            this.lstImages.SelectedIndexChanged += new System.EventHandler(this.lstImages_SelectedIndexChanged);
             // 
             // label127
             // 
@@ -2529,17 +2564,13 @@
             this.panel1.Size = new System.Drawing.Size(689, 30);
             this.panel1.TabIndex = 20;
             // 
-            // btnChonAnh
+            // picMinhChung
             // 
-            this.btnChonAnh.BackColor = System.Drawing.Color.Chocolate;
-            this.btnChonAnh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnChonAnh.ForeColor = System.Drawing.Color.White;
-            this.btnChonAnh.Location = new System.Drawing.Point(565, 17);
-            this.btnChonAnh.Name = "btnChonAnh";
-            this.btnChonAnh.Size = new System.Drawing.Size(113, 25);
-            this.btnChonAnh.TabIndex = 19;
-            this.btnChonAnh.Text = "Nhiều ảnh";
-            this.btnChonAnh.UseVisualStyleBackColor = false;
+            this.picMinhChung.Location = new System.Drawing.Point(243, 398);
+            this.picMinhChung.Name = "picMinhChung";
+            this.picMinhChung.Size = new System.Drawing.Size(447, 224);
+            this.picMinhChung.TabIndex = 21;
+            this.picMinhChung.TabStop = false;
             // 
             // frmDanhGiaSinhVien
             // 
@@ -2548,10 +2579,10 @@
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.ClientSize = new System.Drawing.Size(690, 624);
+            this.Controls.Add(this.picMinhChung);
             this.Controls.Add(this.pnlDanhGia);
             this.Controls.Add(this.lstImages);
             this.Controls.Add(this.btnHuy);
-            this.Controls.Add(this.btnChonAnh);
             this.Controls.Add(this.btnGui);
             this.Controls.Add(this.label127);
             this.Controls.Add(this.pictureBox1);
@@ -2582,6 +2613,7 @@
             this.grpDiem1.ResumeLayout(false);
             this.grpDiem1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picMinhChung)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2781,6 +2813,6 @@
         private System.Windows.Forms.Button btnGui;
         private System.Windows.Forms.Button btnHuy;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button btnChonAnh;
+        private System.Windows.Forms.PictureBox picMinhChung;
     }
 }

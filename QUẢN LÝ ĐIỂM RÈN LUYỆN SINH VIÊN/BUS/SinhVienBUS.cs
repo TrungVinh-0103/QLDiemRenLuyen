@@ -171,6 +171,40 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
                 throw new Exception("Lỗi khi kiểm tra mã sinh viên: " + ex.Message);
             }
         }
+
+        public DataTable GetSinhVienByLop(string tenLop, string maKhoa, string maNienKhoa)
+        {
+            if (string.IsNullOrWhiteSpace(tenLop) || string.IsNullOrWhiteSpace(maKhoa) || string.IsNullOrWhiteSpace(maNienKhoa))
+            {
+                throw new Exception("Thông tin lớp, khoa hoặc niên khóa không được để trống.");
+            }
+            try
+            {
+                return svDAO.GetSinhVienByLop(tenLop, maKhoa, maNienKhoa);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message);
+                throw new Exception("Lỗi khi lấy danh sách sinh viên theo lớp: " + ex.Message);
+            }
+        }
+
+        public DataTable GetSinhVienByLop(string tenLop)
+        {
+            if (string.IsNullOrWhiteSpace(tenLop))
+            {
+                throw new Exception("Tên lớp không được để trống.");
+            }
+            try
+            {
+                return svDAO.GetSinhVienByLop(tenLop);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.Message);
+                throw new Exception("Lỗi khi lấy danh sách sinh viên theo lớp: " + ex.Message);
+            }
+        }
     }
 }
 

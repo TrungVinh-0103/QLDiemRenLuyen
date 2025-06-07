@@ -14,16 +14,21 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
     {
         private MinhChungDAO mcDAO = new MinhChungDAO();
 
-        public bool AddMinhChung(MinhChung mc)
+        public int AddMinhChung(MinhChung mc)
         {
             try
             {
-                return mcDAO.InsertMinhChung(mc) == 1;
+                int maMinhChung = mcDAO.InsertMinhChung(mc);
+                if (maMinhChung <= 0)
+                {
+                    throw new Exception("Không thể thêm minh chứng, có thể do lỗi dữ liệu hoặc kết nối CSDL!");
+                }
+                return maMinhChung; // Trả về MaMinhChung vừa được tạo
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex.Message);
-                throw;
+                throw; // Ném lại ngoại lệ với thông tin chi tiết
             }
         }
         public DataTable GetMinhChungByPhieu(int maPhieu)

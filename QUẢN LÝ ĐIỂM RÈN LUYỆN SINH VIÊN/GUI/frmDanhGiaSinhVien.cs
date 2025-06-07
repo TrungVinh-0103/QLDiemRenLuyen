@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office.Word;
 using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
+using Microsoft.Office.Interop.Excel;
 using PROJ46_QLRenLuyenSinhVien.Helpers;
 using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS;
 using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO;
@@ -23,65 +25,300 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
         private MinhChungBUS minhChungBUS = new MinhChungBUS();
         private HocKyBUS hocKyBUS = new HocKyBUS();
         private string maSV;
+        private bool isAdminMode = false;
         private Dictionary<string, List<string>> minhChungFiles = new Dictionary<string, List<string>>();
+        private int maPhieu = 0;
+
+        private DiemRenLuyenBUS drlBUS = new DiemRenLuyenBUS();
+        //private SinhVienBUS svBUS = new SinhVienBUS();
+        //private HocKyBUS hkBUS = new HocKyBUS();
+        private Dictionary<string, string> hocKyMapping = new Dictionary<string, string>();
+        private Dictionary<string, int> namMapping = new Dictionary<string, int>();
 
         private string maSinhVien;
+        private SinhVienBUS svBUS = new SinhVienBUS();
+        //private TextBox txtEmail;
+        //private TextBox txtHoTen;
 
-        public frmDanhGiaSinhVien(string maSV)
+        private string loaiTaiKhoan;
+
+        //public frmDanhGiaSinhVien(string maSV)
+        //{
+        //    InitializeComponent();
+        //    this.maSinhVien = maSV;
+        //    txtMaSV.Text = maSV; // Lấy từ mã đăng nhập
+        //    LoadComboboxes();
+        //    InitializeDefaultValues();
+        //    UpdateTotals();
+
+        //}
+        public frmDanhGiaSinhVien(string maSV, bool isAdminMode = false, int maPhieu = 0, string loaiTaiKhoan = "SinhVien")
         {
             InitializeComponent();
-            this.maSinhVien = maSV;
-            txtMaSV.Text = maSV; // Lấy từ mã đăng nhập
-            LoadComboboxes();
+            this.maSV = maSV;
+            this.loaiTaiKhoan = isAdminMode ? "Admin" : loaiTaiKhoan;
+            this.isAdminMode = isAdminMode;
+            this.maPhieu = maPhieu;
+            //txtHoTen = new TextBox();
+            //txtEmail = new TextBox();
+            LoadData();
+            //LoadComboboxes();
             InitializeDefaultValues();
+            AttachTextChangedEvents();
             UpdateTotals();
-
+            if (isAdminMode) LoadExistingData();
+            LoadComboboxes();
         }
+        //Cập nhật 07/06/2025: Thêm hàm LoadComboboxes để load dữ liệu cố định cho các combobox
         private void LoadComboboxes()
         {
-            // Load MaHocKy
-            cboMaHocKy.DataSource = hocKyBUS.GetAllHocKy();
-            cboMaHocKy.DisplayMember = "TenHocKy";
-            cboMaHocKy.ValueMember = "MaHocKy";
+            // Ánh xạ học kỳ cố định
+            cboMaHocKy.Items.Clear();
+            hocKyMapping.Clear();
+            cboMaHocKy.Items.Add("Học kỳ 1");
+            hocKyMapping["Học kỳ 1"] = $"HK1_{DateTime.Now.Year}";
+            cboMaHocKy.Items.Add("Học kỳ 2");
+            hocKyMapping["Học kỳ 2"] = $"HK2_{DateTime.Now.Year}";
+            cboMaHocKy.Items.Add("Học kỳ 3");
+            hocKyMapping["Học kỳ 3"] = $"HK3_{DateTime.Now.Year}";
+            if (cboMaHocKy.Items.Count > 0) cboMaHocKy.SelectedIndex = 0;
 
-            // Load Nam từ bảng HocKy
-            System.Data.DataTable dtNam = hocKyBUS.GetAllHocKy(); // Giả sử bảng HocKy có cột Nam
-            var distinctYears = dtNam.AsEnumerable().Select(row => row.Field<int>("Nam")).Distinct().ToList();
-            cboNam.DataSource = dtNam.DefaultView;
-            cboNam.DisplayMember = "Nam";
-            cboNam.ValueMember = "Nam";
+            // Ánh xạ năm cố định
+            cboNam.Items.Clear();
+            namMapping.Clear();
+            cboNam.Items.Add("Năm 2025");
+            namMapping["Năm 2025"] = 2025;
+            cboNam.Items.Add("Năm 2024");
+            namMapping["Năm 2024"] = 2024;
+            cboNam.Items.Add("Năm 2023");
+            namMapping["Năm 2023"] = 2023;
+            if (cboNam.Items.Count > 0) cboNam.SelectedIndex = 0;
         }
-        private void InitializeDefaultValues()
+        private void LoadExistingData()
         {
-            // Đặt mặc định là 0 cho tất cả các TextBox điểm
-            foreach (Control control in this.Controls)
+            if (maPhieu > 0)
             {
-                if (control is GroupBox groupBox)
+                System.Data.DataTable dt = phieuDanhGiaBUS.GetPhieuDanhGiaByMaPhieu(maPhieu);
+                if (dt.Rows.Count > 0)
                 {
-                    foreach (Control subControl in groupBox.Controls)
+                    // Chọn học kỳ và năm dựa trên dữ liệu
+                    string maHocKy = dt.Rows[0]["MaHocKy"].ToString();
+                    int nam = int.Parse(dt.Rows[0]["Nam"].ToString());
+                    foreach (var kvp in hocKyMapping)
                     {
-                        if (subControl is TextBox txt && txt.Name.StartsWith("txtDiem"))
+                        if (kvp.Value == maHocKy)
                         {
-                            txt.Text = "0";
-                            txt.KeyPress += TextBox_OnlyNumbers;
+                            cboMaHocKy.SelectedItem = kvp.Key;
+                            break;
                         }
+                    }
+                    foreach (var kvp in namMapping)
+                    {
+                        if (kvp.Value == nam)
+                        {
+                            cboNam.SelectedItem = kvp.Key;
+                            break;
+                        }
+                    }
+
+                    // Gán các điểm
+                    txtDiem1_1.Text = dt.Rows[0]["Diem1_1"].ToString();
+                    txtDiem1_2.Text = dt.Rows[0]["Diem1_2"].ToString();
+                    txtDiem1_3.Text = dt.Rows[0]["Diem1_3"].ToString();
+                    txtDiem1_4.Text = dt.Rows[0]["Diem1_4"].ToString();
+                    txtDiem1_5.Text = dt.Rows[0]["Diem1_5"].ToString();
+                    txtDiem1_6.Text = dt.Rows[0]["Diem1_6"].ToString();
+                    txtDiem1_7.Text = dt.Rows[0]["Diem1_7"].ToString();
+                    txtDiem1_8.Text = dt.Rows[0]["Diem1_8"].ToString();
+
+                    txtDiem2_1.Text = dt.Rows[0]["Diem2_1"].ToString();
+                    txtDiem2_2.Text = dt.Rows[0]["Diem2_2"].ToString();
+                    txtDiem2_3.Text = dt.Rows[0]["Diem2_3"].ToString();
+                    txtDiem2_4.Text = dt.Rows[0]["Diem2_4"].ToString();
+                    txtDiem2_5.Text = dt.Rows[0]["Diem2_5"].ToString();
+                    txtDiem2_6.Text = dt.Rows[0]["Diem2_6"].ToString();
+                    txtDiem2_7.Text = dt.Rows[0]["Diem2_7"].ToString();
+
+                    txtDiem3_1.Text = dt.Rows[0]["Diem3_1"].ToString();
+                    txtDiem3_2.Text = dt.Rows[0]["Diem3_2"].ToString();
+                    txtDiem3_3.Text = dt.Rows[0]["Diem3_3"].ToString();
+                    txtDiem3_4.Text = dt.Rows[0]["Diem3_4"].ToString();
+                    txtDiem3_5.Text = dt.Rows[0]["Diem3_5"].ToString();
+                    txtDiem3_6.Text = dt.Rows[0]["Diem3_6"].ToString();
+                    txtDiem3_7.Text = dt.Rows[0]["Diem3_7"].ToString();
+
+                    txtDiem4_1.Text = dt.Rows[0]["Diem4_1"].ToString();
+                    txtDiem4_2.Text = dt.Rows[0]["Diem4_2"].ToString();
+                    txtDiem4_3.Text = dt.Rows[0]["Diem4_3"].ToString();
+                    txtDiem4_4.Text = dt.Rows[0]["Diem4_4"].ToString();
+                    txtDiem4_5.Text = dt.Rows[0]["Diem4_5"].ToString();
+
+                    txtDiem5_1.Text = dt.Rows[0]["Diem5_1"].ToString();
+                    txtDiem5_2.Text = dt.Rows[0]["Diem5_2"].ToString();
+                    txtDiem5_3.Text = dt.Rows[0]["Diem5_3"].ToString();
+                    txtDiem5_4.Text = dt.Rows[0]["Diem5_4"].ToString();
+                    txtDiem5_5.Text = dt.Rows[0]["Diem5_5"].ToString();
+                    txtDiem5_6.Text = dt.Rows[0]["Diem5_6"].ToString();
+                    txtTongDiem.Text = dt.Rows[0]["TongDiem"].ToString();
+                    txtXepLoai.Text = GetXepLoai(int.Parse(txtTongDiem.Text));
+
+                    // Load minh chứng
+                    System.Data.DataTable dtMinhChung = minhChungBUS.GetMinhChungByPhieu(maPhieu);
+                    lstImages.Items.Clear();
+                    foreach (DataRow row in dtMinhChung.Rows)
+                    {
+                        lstImages.Items.Add($"Hình {row["MaMinhChung"]}");
                     }
                 }
             }
+        }
+
+        private void LoadData()
+        {
+            txtMaSV.Text = maSV;
+            SinhVien sv = svBUS.GetSinhVienByMaSV(maSV); // Corrected to match the return type of GetSinhVienByMaSV  
+            //if (sv != null)
+            //{
+            //    txtHoTen.Text = sv.HoTen;
+            //    txtEmail.Text = sv.Email;
+            //}
+
+            //cboMaHocKy.DataSource = hocKyBUS.GetAllHocKy();
+            //cboMaHocKy.DisplayMember = "TenHocKy";
+            //cboMaHocKy.ValueMember = "MaHocKy";
+
+            //System.Data.DataTable dtNam = hocKyBUS.GetAllHocKy();
+            //if (dtNam.Rows.Count > 0)
+            //{
+            //    cboNam.DataSource = dtNam;
+            //    cboNam.DisplayMember = "Nam";
+            //    cboNam.ValueMember = "Nam";
+            //}
+            //else
+            //{
+            //    cboNam.DataSource = null;
+            //    cboNam.Items.Clear();
+            //    MessageBox.Show("Không có dữ liệu năm học nào trong hệ thống!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
+
+            if (isAdminMode)
+            {
+                txtMaSV.ReadOnly = true;
+                cboMaHocKy.Enabled = false;
+                cboNam.Enabled = false;
+                foreach (Control control in pnlDanhGia.Controls)
+                {
+                    if (control is System.Windows.Forms.Button btn && btn.Name.StartsWith("btnGuiMinhChung"))
+                    {
+                        btn.Visible = false;
+                    }
+                }
+            }
+        }
+        //private void LoadComboboxes()
+        //{
+        //    // Load MaHocKy
+        //    cboMaHocKy.DataSource = hocKyBUS.GetAllHocKy();
+        //    cboMaHocKy.DisplayMember = "TenHocKy";
+        //    cboMaHocKy.ValueMember = "MaHocKy";
+
+        //    // Load Nam từ bảng HocKy
+        //    System.Data.DataTable dtNam = hocKyBUS.GetAllHocKy(); // Giả sử bảng HocKy có cột Nam
+        //    var distinctYears = dtNam.AsEnumerable().Select(row => row.Field<int>("Nam")).Distinct().ToList();
+        //    cboNam.DataSource = dtNam.DefaultView;
+        //    cboNam.DisplayMember = "Nam";
+        //    cboNam.ValueMember = "Nam";
+        //}
+        private void InitializeDefaultValues()
+        {
+            foreach (Control control in pnlDanhGia.Controls)
+            {
+                if (control is System.Windows.Forms.TextBox txt && txt.Name.StartsWith("txtDiem"))
+                {
+                    txt.Text = "0";
+                    txt.KeyPress += TextBox_OnlyNumbers;
+                }
+            }
+            txtDiem1_1.Text = "0";
+            txtDiem1_2.Text = "0";
+            txtDiem1_3.Text = "0";
+            txtDiem1_4.Text = "0";
+            txtDiem1_5.Text = "0";
+            txtDiem1_6.Text = "0";
+            txtDiem1_7.Text = "0";
+            txtDiem1_8.Text = "0";
             txtTongDiem1.Text = "0";
+
+            txtDiem2_1.Text = "0";
+            txtDiem2_2.Text = "0";
+            txtDiem2_3.Text = "0";
+            txtDiem2_4.Text = "0";
+            txtDiem2_5.Text = "0";
+            txtDiem2_6.Text = "0";
+            txtDiem2_7.Text = "0";
             txtTongDiem2.Text = "0";
+
+            txtDiem3_1.Text = "0";
+            txtDiem3_2.Text = "0";
+            txtDiem3_3.Text = "0";
+            txtDiem3_4.Text = "0";
+            txtDiem3_5.Text = "0";
+            txtDiem3_6.Text = "0";
+            txtDiem3_7.Text = "0";
             txtTongDiem3.Text = "0";
+
+            txtDiem4_1.Text = "0";
+            txtDiem4_2.Text = "0";
+            txtDiem4_3.Text = "0";
+            txtDiem4_4.Text = "0";
+            txtDiem4_5.Text = "0";
             txtTongDiem4.Text = "0";
+
+            txtDiem5_1.Text = "0";
+            txtDiem5_2.Text = "0";
+            txtDiem5_3.Text = "0";
+            txtDiem5_4.Text = "0";
+            txtDiem5_5.Text = "0";
+            txtDiem5_6.Text = "0";
             txtTongDiem5.Text = "0";
             txtTongDiem.Text = "0";
             txtXepLoai.Text = "";
         }
+
+        private void AttachTextChangedEvents()
+        {
+            foreach (Control control in pnlDanhGia.Controls)
+            {
+                if (control is System.Windows.Forms.TextBox txt && (txt.Name.StartsWith("txtDiem") || txt.Name.StartsWith("txtTongDiem")))
+                {
+                    txt.TextChanged += TextBox_TextChanged;
+                }
+            }
+        }
+
         private void TextBox_OnlyNumbers(object sender, KeyPressEventArgs e)
         {
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '-')
             {
                 e.Handled = true;
-                MessageBox.Show($"Nhập sai ở mục {((TextBox)sender).Name}, không được nhập chữ cái!",
+                string txtName = ((System.Windows.Forms.TextBox)sender).Name;
+                var displayNames = new Dictionary<string, string>
+        {
+            { "txtDiem1_1", "Điểm 1.1" }, { "txtDiem1_2", "Điểm 1.2" }, { "txtDiem1_3", "Điểm 1.3" },
+            { "txtDiem1_4", "Điểm 1.4" }, { "txtDiem1_5", "Điểm 1.5" }, { "txtDiem1_6", "Điểm 1.6" },
+            { "txtDiem1_7", "Điểm 1.7" }, { "txtDiem1_8", "Điểm 1.8" }, { "txtDiem2_1", "Điểm 2.1" },
+            { "txtDiem2_2", "Điểm 2.2" }, { "txtDiem2_3", "Điểm 2.3" }, { "txtDiem2_4", "Điểm 2.4" },
+            { "txtDiem2_5", "Điểm 2.5" }, { "txtDiem2_6", "Điểm 2.6" }, { "txtDiem2_7", "Điểm 2.7" },
+            { "txtDiem3_1", "Điểm 3.1" }, { "txtDiem3_2", "Điểm 3.2" }, { "txtDiem3_3", "Điểm 3.3" },
+            { "txtDiem3_4", "Điểm 3.4" }, { "txtDiem3_5", "Điểm 3.5" }, { "txtDiem3_6", "Điểm 3.6" },
+            { "txtDiem3_7", "Điểm 3.7" }, { "txtDiem4_1", "Điểm 4.1" }, { "txtDiem4_2", "Điểm 4.2" },
+            { "txtDiem4_3", "Điểm 4.3" }, { "txtDiem4_4", "Điểm 4.4" }, { "txtDiem4_5", "Điểm 4.5" },
+            { "txtDiem5_1", "Điểm 5.1" }, { "txtDiem5_2", "Điểm 5.2" }, { "txtDiem5_3", "Điểm 5.3" },
+            { "txtDiem5_4", "Điểm 5.4" }, { "txtDiem5_5", "Điểm 5.5" }, { "txtDiem5_6", "Điểm 5.6" },
+            { "txtTongDiem", "Tổng điểm" }, { "txtXepLoai", "Xếp loại" }
+        };
+                string displayName = displayNames.ContainsKey(txtName) ? displayNames[txtName] : txtName;
+                MessageBox.Show($"Nhập sai ở mục: {displayName}\r\nChỉ được nhập số,\r\nkhông được nhập chữ cái!",
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -111,7 +348,7 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
             // Tự động load xếp loại
             txtXepLoai.Text = GetXepLoai(tongDiem);
         }
-        private int SumDiem(TextBox[] diemTextBoxes)
+        private int SumDiem(System.Windows.Forms.TextBox[] diemTextBoxes)
         {
             int sum = 0;
             foreach (var txt in diemTextBoxes)
@@ -200,15 +437,28 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
         private void CheckMinhChungRequirements()
         {
+            if (isAdminMode) return;
+
             string[] requiredMinhChung = { "txtDiem1_3", "txtDiem1_4", "txtDiem2_3", "txtDiem3_4", "txtDiem3_5", "txtDiem4_1", "txtDiem4_2" };
+            var displayNames = new Dictionary<string, string>
+    {
+        { "txtDiem1_3", "Điểm 1.3" },
+        { "txtDiem1_4", "Điểm 1.4" },
+        { "txtDiem2_3", "Điểm 2.3" },
+        { "txtDiem3_4", "Điểm 3.4" },
+        { "txtDiem3_5", "Điểm 3.5" },
+        { "txtDiem4_1", "Điểm 4.1" },
+        { "txtDiem4_2", "Điểm 4.2" }
+    };
             foreach (string txtName in requiredMinhChung)
             {
                 Control[] controls = this.Controls.Find(txtName, true);
-                if (controls.Length > 0 && controls[0] is TextBox txt)
+                if (controls.Length > 0 && controls[0] is System.Windows.Forms.TextBox txt)
                 {
                     if (int.TryParse(txt.Text.Trim(), out int diem) && diem != 0 && !minhChungFiles.ContainsKey(txtName))
                     {
-                        MessageBox.Show($"Mục {txtName} yêu cầu minh chứng, vui lòng gửi ảnh!",
+                        string displayName = displayNames.ContainsKey(txtName) ? displayNames[txtName] : txtName;
+                        MessageBox.Show($"Mục: {displayName}\r\nYêu cầu minh chứng,\r\nvui lòng gửi ảnh!",
                             "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
@@ -233,7 +483,19 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     {
                         lstImages.Items.Add(Path.GetFileName(file));
                     }
-                    MessageBox.Show($"Minh chứng cho mục {txtName} đã được gửi!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    var displayNames = new Dictionary<string, string>
+            {
+                { "txtDiem1_3", "Điểm 1.3" },
+                { "txtDiem1_4", "Điểm 1.4" },
+                { "txtDiem2_3", "Điểm 2.3" },
+                { "txtDiem3_4", "Điểm 3.4" },
+                { "txtDiem3_5", "Điểm 3.5" },
+                { "txtDiem4_1", "Điểm 4.1" },
+                { "txtDiem4_2", "Điểm 4.2" }
+            };
+                    string displayName = displayNames.ContainsKey(txtName) ? displayNames[txtName] : txtName;
+                    MessageBox.Show($"Minh chứng cho mục: {displayName}\nĐã được gửi thành công!",
+                        "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
@@ -269,29 +531,52 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
         {
             UploadMinhChung("txtDiem4_2");
         }
-
+        //Cập nhật 07/06/2025: Thêm hàm GetMaHocKyFromText và GetNamFromText để ánh xạ học kỳ và năm từ chuỗi
+        private string GetMaHocKyFromText(string hocKyText)
+        {
+            return hocKyMapping.ContainsKey(hocKyText) ? hocKyMapping[hocKyText] : throw new Exception("Học kỳ không hợp lệ!");
+        }
+        //Cập nhật 07/06/2025: Thêm hàm GetNamFromText để ánh xạ năm từ chuỗi
+        private int GetNamFromText(string namText)
+        {
+            return namMapping.ContainsKey(namText) ? namMapping[namText] : throw new Exception("Năm không hợp lệ!");
+        }
         private void btnGui_Click(object sender, EventArgs e)
         {
             try
             {
-                if (string.IsNullOrEmpty(cboMaHocKy.SelectedValue?.ToString()) || cboNam.SelectedValue == null)
+                if (cboMaHocKy.SelectedItem == null || cboNam.SelectedItem == null)
                 {
                     MessageBox.Show("Vui lòng chọn học kỳ và năm!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                // Kiểm tra minh chứng bắt buộc
-                string[] requiredMinhChung = { "txtDiem1_3", "txtDiem1_4", "txtDiem2_3", "txtDiem3_4", "txtDiem3_5", "txtDiem4_1", "txtDiem4_2" };
-                foreach (string txtName in requiredMinhChung)
+                if (!isAdminMode)
                 {
-                    Control[] controls = this.Controls.Find(txtName, true);
-                    if (controls.Length > 0 && controls[0] is TextBox txt)
+                    // Kiểm tra minh chứng bắt buộc
+                    string[] requiredMinhChung = { "txtDiem1_3", "txtDiem1_4", "txtDiem2_3", "txtDiem3_4", "txtDiem3_5", "txtDiem4_1", "txtDiem4_2" };
+                    var displayNames = new Dictionary<string, string>
+            {
+                { "txtDiem1_3", "Điểm 1.3" },
+                { "txtDiem1_4", "Điểm 1.4" },
+                { "txtDiem2_3", "Điểm 2.3" },
+                { "txtDiem3_4", "Điểm 3.4" },
+                { "txtDiem3_5", "Điểm 3.5" },
+                { "txtDiem4_1", "Điểm 4.1" },
+                { "txtDiem4_2", "Điểm 4.2" }
+            };
+                    foreach (string txtName in requiredMinhChung)
                     {
-                        if (int.TryParse(txt.Text.Trim(), out int diem) && diem != 0 && !minhChungFiles.ContainsKey(txtName))
+                        Control[] controls = pnlDanhGia.Controls.Find(txtName, true);
+                        if (controls.Length > 0 && controls[0] is System.Windows.Forms.TextBox txt)
                         {
-                            MessageBox.Show($"Mục {txtName} yêu cầu minh chứng, vui lòng gửi ảnh!",
-                                "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
+                            if (int.TryParse(txt.Text.Trim(), out int diem) && diem != 0 && !minhChungFiles.ContainsKey(txtName))
+                            {
+                                string displayName = displayNames.ContainsKey(txtName) ? displayNames[txtName] : txtName;
+                                MessageBox.Show($"Mục: {displayName}\r\nYêu cầu minh chứng,\r\nvui lòng gửi ảnh!",
+                                    "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                return;
+                            }
                         }
                     }
                 }
@@ -300,11 +585,10 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
                 PhieuDanhGia pg = new PhieuDanhGia
                 {
-                    //MaPhieu = 0, // MaPhieu sẽ được tự động tạo trong cơ sở dữ liệu
                     MaSV = txtMaSV.Text.Trim(),
-                    MaHocKy = cboMaHocKy.SelectedValue.ToString(),
-                    Nam = (int)cboNam.SelectedValue,
-                    LoaiPhieu = "SinhVien",
+                    MaHocKy = GetMaHocKyFromText(cboMaHocKy.SelectedItem.ToString()),
+                    Nam = GetNamFromText(cboNam.SelectedItem.ToString()),
+                    LoaiPhieu = isAdminMode ? "Admin" : "SinhVien",
                     Diem1_1 = int.Parse(txtDiem1_1.Text.Trim()),
                     Diem1_2 = int.Parse(txtDiem1_2.Text.Trim()),
                     Diem1_3 = int.Parse(txtDiem1_3.Text.Trim()),
@@ -341,45 +625,80 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                     TongDiem = tongDiem
                 };
 
-                int maPhieu = phieuDanhGiaBUS.AddPhieuDanhGia(pg);
-                if (maPhieu > 0)
+                if (isAdminMode)
                 {
-                    foreach (var kvp in minhChungFiles)
+                    bool updated = phieuDanhGiaBUS.UpdatePhieuDanhGia(maPhieu, pg);
+                    if (updated)
                     {
-                        foreach (string filePath in kvp.Value)
-                        {
-                            byte[] imageData = ImageHelper.ConvertImageToBytes(filePath);
-                            MinhChung mc = new MinhChung
-                            {
-                                MaPhieu = maPhieu,
-                                ImageData = imageData
-                            };
-                            phieuDanhGiaBUS.AddMinhChung(mc);
-                        }
+                        DiemRenLuyenBUS drlBUS = new DiemRenLuyenBUS();
+                        drlBUS.UpdateDiemRenLuyen(maSV, GetMaHocKyFromText(cboMaHocKy.SelectedItem.ToString()), GetNamFromText(cboNam.SelectedItem.ToString()), tongDiem, txtXepLoai.Text);
+                        MessageBox.Show("Cập nhật đánh giá thành công!");
+                        this.Close();
                     }
-                    MessageBox.Show("Gửi đánh giá thành công!");
-                    this.Close();
+                    else
+                    {
+                        MessageBox.Show("Cập nhật đánh giá thất bại!");
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Gửi đánh giá thất bại!");
+                    int newMaPhieu = phieuDanhGiaBUS.AddPhieuDanhGia(pg);
+                    if (newMaPhieu > 0)
+                    {
+                        foreach (var kvp in minhChungFiles)
+                        {
+                            foreach (string filePath in kvp.Value)
+                            {
+                                byte[] imageData = ImageHelper.ConvertImageToBytes(filePath);
+                                MinhChung mc = new MinhChung
+                                {
+                                    MaPhieu = newMaPhieu,
+                                    ImageData = imageData
+                                };
+                                int maMinhChung = minhChungBUS.AddMinhChung(mc);
+                                if (maMinhChung <= 0)
+                                {
+                                    MessageBox.Show("Lỗi khi thêm minh chứng, vui lòng thử lại!");
+                                    return;
+                                }
+                            }
+                        }
+                        DiemRenLuyenBUS drlBUS = new DiemRenLuyenBUS();
+                        drlBUS.UpdateDiemRenLuyen(maSV, GetMaHocKyFromText(cboMaHocKy.SelectedItem.ToString()), GetNamFromText(cboNam.SelectedItem.ToString()), tongDiem, txtXepLoai.Text);
+                        MessageBox.Show("Gửi đánh giá thành công!");
+                        this.Close();
+                        frmLogin loginForm = new frmLogin();
+                        loginForm.Show();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Gửi đánh giá thất bại!");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex.Message);
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
-            //thông báo xác nhận trước khi đóng form, đóng form ko lưu dữ liệu, khi nào người dùng nhấn nút "Gửi" thì mới lưu dữ liệu
             DialogResult result = MessageBox.Show("Bạn có chắc muốn hủy không?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
-                this.Close();
-                new frmLogin().Show();
+                if (loaiTaiKhoan == "Admin")
+                {
+                    this.Close(); // Admin chỉ đóng form này
+                    //frmChonSinhVien chonSinhVienForm = new frmChonSinhVien();
+                    //chonSinhVienForm.Show(); // Mở lại form chọn sinh viên
+                }
+                else if (loaiTaiKhoan == "SinhVien")
+                {
+                    this.Close(); // Sinh viên thoát toàn bộ chương trình
+                    frmLogin loginForm = new frmLogin();
+                    loginForm.Show(); // Mở lại form đăng nhập
+                }
             }
         }
 
@@ -427,7 +746,231 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
                 txtXepLoai.Text = GetXepLoai(int.Parse(txtTongDiem.Text));
             }
         }
+
+        private void lstImages_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lstImages.SelectedItems.Count > 0)
+            {
+                // Lấy giá trị Text của mục đã chọn
+                string selectedText = lstImages.SelectedItems[0].ToString();
+
+                if (isAdminMode)
+                {
+                    // Admin mode: Load ảnh từ bảng MinhChung
+                    int maMinhChung = int.Parse(selectedText.Replace("Hình ", ""));
+                    System.Data.DataTable dt = minhChungBUS.GetMinhChungByPhieu(maPhieu);
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        if (Convert.ToInt32(row["MaMinhChung"]) == maMinhChung)
+                        {
+                            using (MemoryStream ms = new MemoryStream((byte[])row["ImageData"]))
+                            {
+                                picMinhChung.Image = Image.FromStream(ms);
+                            }
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    // Sinh viên mode: Load ảnh từ file tạm
+                    foreach (var kvp in minhChungFiles)
+                    {
+                        foreach (string filePath in kvp.Value)
+                        {
+                            if (Path.GetFileName(filePath) == selectedText)
+                            {
+                                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                                {
+                                    picMinhChung.Image = Image.FromStream(fs);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            // Gửi thông báo cho form cha (frmChonSinhVien) để làm mới dữ liệu
+            if (this.MdiParent != null)
+            {
+                foreach (Form form in this.MdiParent.MdiChildren)
+                {
+                    if (form is frmChonSinhVien chonSinhVienForm)
+                    {
+                        chonSinhVienForm.RefreshDataGridView();
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void txtDiem1_1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_2_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_3_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_4_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_5_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_6_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_7_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem1_8_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_2_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_3_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_4_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_5_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_6_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem2_7_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_2_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_3_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_4_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_5_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_6_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem3_7_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem4_1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem4_2_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem4_3_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem4_4_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem4_5_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_2_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_3_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_4_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_5_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
+
+        private void txtDiem5_6_TextChanged(object sender, EventArgs e)
+        {
+            UpdateTotals();
+        }
     }
 }
-//Còn vấn đề phải fix
-//Nếu được thì việc hiển thị ảnh minh chứng, bạn có thể thêm một PictureBox để hiển thị ảnh đã chọn từ danh sách lstImages. Khi người dùng chọn một mục trong lstImages, bạn có thể tải ảnh tương ứng và hiển thị nó trong PictureBox. Dưới đây là ví dụ đơn giản:

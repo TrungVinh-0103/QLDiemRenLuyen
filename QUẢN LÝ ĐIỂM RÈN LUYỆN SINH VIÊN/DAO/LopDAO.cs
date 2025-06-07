@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DTO;
 using System.Data;
 using System.Data.SqlClient;
+using static Raven.Abstractions.Data.Constants;
 
 namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
 {
@@ -195,5 +196,37 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
             }
         }
 
+        public string GetMaNienKhoaByTenLopAndMaKhoa(string tenLop, string maKhoa)
+        {
+            string query = "SELECT MaNienKhoa FROM Lop WHERE TenLop = @TenLop AND MaKhoa = @MaKhoa";
+            SqlParameter[] parameters = {
+            new SqlParameter("@TenLop", tenLop),
+            new SqlParameter("@MaKhoa", maKhoa)
+        };
+            DataTable dt = DataProvider.ExecuteQuery(query, parameters);
+            if (dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["MaNienKhoa"].ToString();
+            }
+            return null;
+        }
+
+        public DataTable GetLopByKhoaAndHocKy(string maKhoa, string maHocKy, int nam)
+        {
+            string query = @"
+            SELECT DISTINCT L.TenLop, L.MaKhoa, L.MaNienKhoa
+            FROM Lop L
+            JOIN SinhVien SV ON L.TenLop = SV.TenLop AND L.MaKhoa = SV.MaKhoa AND L.MaNienKhoa = SV.MaNienKhoa
+            JOIN PhieuDanhGia PD ON SV.MaSV = PD.MaSV
+            WHERE L.MaKhoa = @MaKhoa 
+            AND PD.MaHocKy = @MaHocKy 
+            AND PD.Nam = @Nam";
+            SqlParameter[] parameters = {
+            new SqlParameter("@MaKhoa", maKhoa),
+            new SqlParameter("@MaHocKy", maHocKy),
+            new SqlParameter("@Nam", nam)
+        };
+            return DataProvider.ExecuteQuery(query, parameters);
+        }
     }
 }

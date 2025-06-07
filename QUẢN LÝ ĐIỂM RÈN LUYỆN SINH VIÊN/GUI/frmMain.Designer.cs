@@ -92,6 +92,7 @@
             this.DanhGiaToolStripMenuItem.Name = "DanhGiaToolStripMenuItem";
             this.DanhGiaToolStripMenuItem.Size = new System.Drawing.Size(119, 29);
             this.DanhGiaToolStripMenuItem.Text = "Đánh giá";
+            this.DanhGiaToolStripMenuItem.Click += new System.EventHandler(this.DanhGiaToolStripMenuItem_Click);
             this.DanhGiaToolStripMenuItem.MouseHover += new System.EventHandler(this.DanhGiaToolStripMenuItem_MouseHover);
             // 
             // QuanLyDiemToolStripMenuItem
@@ -101,8 +102,8 @@
             this.QuanLyDiemToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.QuanLyDiemToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("QuanLyDiemToolStripMenuItem.Image")));
             this.QuanLyDiemToolStripMenuItem.Name = "QuanLyDiemToolStripMenuItem";
-            this.QuanLyDiemToolStripMenuItem.Size = new System.Drawing.Size(159, 29);
-            this.QuanLyDiemToolStripMenuItem.Text = "Quản lý Điểm";
+            this.QuanLyDiemToolStripMenuItem.Size = new System.Drawing.Size(157, 29);
+            this.QuanLyDiemToolStripMenuItem.Text = "Quản lý điểm";
             this.QuanLyDiemToolStripMenuItem.Click += new System.EventHandler(this.QuanLyDiemToolStripMenuItem_Click);
             // 
             // ThongKeToolStripMenuItem

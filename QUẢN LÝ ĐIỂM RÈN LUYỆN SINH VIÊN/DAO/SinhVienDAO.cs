@@ -162,8 +162,63 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.DAO
             return DataProvider.ExecuteQuery(query);
         }
 
+        public DataTable GetSinhVienByLop(string tenLop, string maKhoa, string maNienKhoa)
+        {
+            //không sử dụng procedure
+            using (SqlConnection conn = db.GetConnection())
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM SinhVien WHERE TenLop = @TenLop AND MaKhoa = @MaKhoa AND MaNienKhoa = @MaNienKhoa", conn))
+                {
+                    cmd.Parameters.AddWithValue("@TenLop", tenLop);
+                    cmd.Parameters.AddWithValue("@MaKhoa", maKhoa);
+                    cmd.Parameters.AddWithValue("@MaNienKhoa", maNienKhoa);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+                }
+            }
+        }
 
+        public SinhVien GetSinhVienByMaSV(string maSV)
+        {
+            using (SqlConnection conn = db.GetConnection())
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM SinhVien WHERE MaSV = @MaSV", conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaSV", maSV);
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new SinhVien
+                            {
+                                MaSV = reader["MaSV"].ToString(),
+                                HoTen = reader["HoTen"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public DataTable GetSinhVienByLop(string tenLop)
+        {
+            using (SqlConnection conn = db.GetConnection())
+            {
+                conn.Open();
+                using (SqlCommand cmd = new SqlCommand("SELECT * FROM SinhVien WHERE TenLop = @TenLop", conn))
+                {
+                    cmd.Parameters.AddWithValue("@TenLop", tenLop);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+                }
+            }
+        }
     }
-
-
 }

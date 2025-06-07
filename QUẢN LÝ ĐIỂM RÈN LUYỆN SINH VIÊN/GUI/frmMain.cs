@@ -61,9 +61,10 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.GUI
 
         private void DanhGiaToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmDanhGiaSinhVien danhGiaSinhVien = new frmDanhGiaSinhVien(maDangNhap);
-            danhGiaSinhVien.MdiParent = this;
-            danhGiaSinhVien.Show();
+            //mở frmChonSinhVien
+            frmChonSinhVien chonSinhVienForm = new frmChonSinhVien();
+            chonSinhVienForm.MdiParent = this;
+            chonSinhVienForm.Show();
         }
 
         private void ThongKeToolStripMenuItem_Click(object sender, EventArgs e)

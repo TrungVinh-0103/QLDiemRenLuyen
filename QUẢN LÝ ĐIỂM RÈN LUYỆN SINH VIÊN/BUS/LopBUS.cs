@@ -82,5 +82,17 @@ namespace QUẢN_LÝ_ĐIỂM_RÈN_LUYỆN_SINH_VIÊN.BUS
             //code lấy tất cả niên khóa
             return lopDAO.GetAllNienKhoa();
         }
+
+        public string GetMaNienKhoaByTenLopAndMaKhoa(string tenLop, string maKhoa)
+        {
+            //code lấy mã niên khóa theo tên lớp và mã khoa
+            return lopDAO.GetMaNienKhoaByTenLopAndMaKhoa(tenLop, maKhoa);
+        }
+
+        public DataTable GetLopByKhoaAndHocKy(string maKhoa, string maHocKy, int nam)
+        {
+            //code lấy lớp theo mã khoa, mã học kỳ và năm
+            return lopDAO.GetLopByKhoaAndHocKy(maKhoa, maHocKy, nam);
+        }
     }
 }
